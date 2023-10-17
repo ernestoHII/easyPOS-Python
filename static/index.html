@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Speed Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .tables-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .summary {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            max-height: 320px; /* This height will be able to show up to 10 rows */
+            overflow-y: auto;
+            width: 40%;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Database Speed Test</h1>
+    <button onclick="testSpeed()">Test Speed</button>
+
+    <div class="tables-container">
+        <div class="table-wrapper" id="mssqlWrapper">
+            <h2>MSSQL Results</h2>
+            <table id="mssqlTable">
+                <thead>
+                    <tr>
+                        <th>Table Name</th>
+                        <th>Time (Seconds)</th>
+                        <th>Rows</th>
+                    </tr>
+                </thead>
+                <tbody id="mssqlResults"></tbody>
+            </table>
+        </div>
+        
+        <div class="summary">
+            <h2>Total Row Count</h2>
+            <p>Total MSSQL Rows: <span id="totalMssqlRows"></span></p>
+            <p>Total PostgreSQL Rows: <span id="totalPostgresqlRows"></span></p>
+
+            <h2>Total Time (Seconds)</h2>
+            <p>Total MSSQL Time: <span id="totalMssqlTime"></span></p>
+            <p>Total PostgreSQL Time: <span id="totalPostgresqlTime"></span></p>
+
+            <h2>Total Write Time (Seconds)</h2>
+            <p>MSSQL Write Time: <span id="mssqlWriteSpeed"></span></p>
+            <p>PostgreSQL Write Time: <span id="postgresqlWriteSpeed"></span></p>
+        </div>
+
+        <div class="table-wrapper" id="postgresqlWrapper">
+            <h2>PostgreSQL Results</h2>
+            <table id="postgresqlTable">
+                <thead>
+                    <tr>
+                        <th>Table Name</th>
+                        <th>Time (Seconds)</th>
+                        <th>Rows</th>
+                    </tr>
+                </thead>
+                <tbody id="postgresqlResults"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("mssqlWrapper").addEventListener("scroll", function() {
+            document.getElementById("postgresqlWrapper").scrollTop = this.scrollTop;
+        });
+    
+        document.getElementById("postgresqlWrapper").addEventListener("scroll", function() {
+            document.getElementById("mssqlWrapper").scrollTop = this.scrollTop;
+        });
+                
+        function testSpeed() {
+            let mssqlTimes = [];
+            let postgresqlTimes = [];
+        
+            let mssqlPromise = $.get("/mssql/speedtest", function(data) {
+                $('#mssqlResults').empty();
+                let totalMssqlRows = 0;
+                let totalMssqlTime = 0;
+                for (let table in data) {
+                    if (table !== 'total_time') {
+                        const rowCount = !isNaN(data[table].row_count) ? parseInt(data[table].row_count, 10) : 0;
+                        const time = parseFloat(data[table].time);
+                        mssqlTimes.push(time);
+                        $('#mssqlResults').append(`<tr><td>${table}</td><td>${time}</td><td>${rowCount}</td></tr>`);
+                        totalMssqlRows += rowCount;
+                        totalMssqlTime += time;
+                    }
+                }
+                $('#totalMssqlRows').text(totalMssqlRows);
+                $('#totalMssqlTime').text(totalMssqlTime.toFixed(5));
+            });
+        
+            let postgresqlPromise = $.get("/postgresql/speedtest", function(data) {
+                $('#postgresqlResults').empty();
+                let totalPostgresqlRows = 0;
+                let totalPostgresqlTime = 0;
+                for (let table in data) {
+                    if (table !== 'total_time') {
+                        const rowCount = !isNaN(data[table].row_count) ? parseInt(data[table].row_count, 10) : 0;
+                        const time = parseFloat(data[table].time);
+                        postgresqlTimes.push(time);
+                        $('#postgresqlResults').append(`<tr><td>${table}</td><td>${time}</td><td>${rowCount}</td></tr>`);
+                        totalPostgresqlRows += rowCount;
+                        totalPostgresqlTime += time;
+                    }
+                }
+                $('#totalPostgresqlRows').text(totalPostgresqlRows);
+                $('#totalPostgresqlTime').text(totalPostgresqlTime.toFixed(5));
+            });
+
+            
+            let mssqlWritePromise = $.post("/mssql/writetest", function(data) {
+                // Assuming the returned data is a dictionary with table names as keys and their respective write speeds as values.
+                let totalWriteTimeMssql = 0;
+                for (let table in data) {
+                    totalWriteTimeMssql += parseFloat(data[table]);
+                }
+                $('#mssqlWriteSpeed').text(totalWriteTimeMssql.toFixed(5));
+            });
+
+            let postgresqlWritePromise = $.post("/postgresql/writetest", function(data) {
+                // Assuming the returned data is a dictionary with table names as keys and their respective write speeds as values.
+                let totalWriteTimePostgresql = 0;
+                for (let table in data) {
+                    totalWriteTimePostgresql += parseFloat(data[table]);
+                }
+                $('#postgresqlWriteSpeed').text(totalWriteTimePostgresql.toFixed(5));
+            });
+            
+        // Once both AJAX requests have completed, compare and adjust colors
+        $.when(mssqlPromise, postgresqlPromise, mssqlWritePromise, postgresqlWritePromise).done(function() {
+            for (let i = 0; i < mssqlTimes.length; i++) {
+                if (postgresqlTimes[i] > mssqlTimes[i]) {
+                    $('#postgresqlResults tr').eq(i).find('td:nth-child(2)').css('color', 'red');
+                    $('#mssqlResults tr').eq(i).find('td:nth-child(2)').css('color', 'green');
+                } else if (mssqlTimes[i] > postgresqlTimes[i]) {
+                    $('#mssqlResults tr').eq(i).find('td:nth-child(2)').css('color', 'red');
+                    $('#postgresqlResults tr').eq(i).find('td:nth-child(2)').css('color', 'green');
+                } else {
+                    // If times are equal, leave the text color as default
+                }
+            }
+        });
+    }
+    </script>
+
+</body>
+</html>
