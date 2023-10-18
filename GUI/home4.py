@@ -19,6 +19,15 @@ from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceList import Ui_POSTouchQ
 from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceDetail import Ui_POSTouchQuickServiceDetail
 from TrnPOS.TrnPOSTouch.POSTouchSalesList import Ui_POSTouchSalesList
 from TrnPOS.TrnPOSTouch.POSTouchSalesDetail import Ui_POSTouchSalesDetail
+from MstCustomer.CustomerList import Ui_CustomerList
+from MstCustomer.CustomerDetail import Ui_CustomerDetail
+from MstDiscount.DiscountList import Ui_DiscountList
+from MstDiscount.DiscountDetail import Ui_DiscountDetail
+from MstDiscount.DiscountSearchItemDetail import Ui_DiscountSearchItemDetail
+
+
+
+
 
 file_path = 'POS-type.ini'
 # Usage
@@ -199,6 +208,102 @@ class EmbeddedPOSTouchSalesDetail(QWidget):
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here
+
+class EmbeddedCustomerListCombinedApp(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_CustomerList()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.ui.pushButtonAdd.clicked.connect(self.open_CustomerDetailCombinedApp)
+
+    def open_CustomerDetailCombinedApp(self):
+        item_QSD_tab = EmbeddedCustomerDetailCombinedApp(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Customer List")
+        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedCustomerDetailCombinedApp(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_CustomerDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        # self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
+        # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
+        # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
+        # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
+        # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
+
+    def open_tab(self):
+        item_QSD_tab = Ui_POSTouchQuickServiceDetail(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Customer Detail")
+        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedCustomerListCombinedApp(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_CustomerList()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.ui.pushButtonAdd.clicked.connect(self.open_CustomerDetailCombinedApp)
+
+    def open_CustomerDetailCombinedApp(self):
+        item_QSD_tab = EmbeddedCustomerDetailCombinedApp(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Customer List")
+        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedCustomerDetailCombinedApp(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_CustomerDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        # self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
+        # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
+        # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
+        # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
+        # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
+
+    def open_tab(self):
+        item_QSD_tab = Ui_POSTouchQuickServiceDetail(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Customer Detail")
+        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here        
 class Menu(QMainWindow):
     def __init__(self, tab_widget):
         super().__init__()
@@ -414,6 +519,10 @@ class Menu(QMainWindow):
                     # self.tab_widget.addTab(item_POS_tab, "Activity - POS Touch")
                     # self.tab_widget.setCurrentWidget(item_POS_tab) 
                     pass
+            elif button_value == "Customer": #dldl
+                item_Customer_tab = EmbeddedCustomerListCombinedApp(self, self.tab_widget)
+                self.tab_widget.addTab(item_Customer_tab, "Customer")
+                self.tab_widget.setCurrentWidget(item_Customer_tab)                
                                                                                            
     def load_first_page(self, table_widget):
         self.current_page = 1
