@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Dialog(object):
+class Ui_DialogItemComponentDetail(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 350)
@@ -49,19 +49,19 @@ class Ui_Dialog(object):
         self.pushButton.setAutoFillBackground(False)
         self.pushButton.setStyleSheet("background-color: rgb(240, 80, 128);\n"
 "color: rgb(255, 255, 255);")
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.frame)
-        self.pushButton_2.setGeometry(QtCore.QRect(1280, 10, 70, 40))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.pushButton_2.setFont(font)
-        self.pushButton_2.setStyleSheet("background-color: rgb(243, 79, 28);\n"
-"color: rgb(255, 255, 255);")
-        self.pushButton_2.setFlat(False)
-        self.pushButton_2.setObjectName("pushButton_2")
+#         self.pushButton.setObjectName("pushButton")
+#         self.pushButton_2 = QtWidgets.QPushButton(self.frame)
+#         self.pushButton_2.setGeometry(QtCore.QRect(1280, 10, 70, 40))
+#         font = QtGui.QFont()
+#         font.setFamily("Segoe UI")
+#         font.setPointSize(10)
+#         font.setBold(True)
+#         font.setWeight(75)
+#         self.pushButton_2.setFont(font)
+#         self.pushButton_2.setStyleSheet("background-color: rgb(243, 79, 28);\n"
+# "color: rgb(255, 255, 255);")
+#         self.pushButton_2.setFlat(False)
+#         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_6 = QtWidgets.QPushButton(Dialog)
         self.pushButton_6.setGeometry(QtCore.QRect(320, 10, 80, 40))
         font = QtGui.QFont()
@@ -161,7 +161,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.label_2.setText(_translate("Dialog", "Item Component Detail"))
         self.pushButton.setText(_translate("Dialog", "View"))
-        self.pushButton_2.setText(_translate("Dialog", "Close"))
+        # self.pushButton_2.setText(_translate("Dialog", "Close"))
         self.pushButton_6.setText(_translate("Dialog", "Save"))
         self.pushButton_7.setText(_translate("Dialog", "Close"))
         self.label_3.setText(_translate("Dialog", "Quantity:"))
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
+    ui = Ui_DialogItemComponentDetail()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

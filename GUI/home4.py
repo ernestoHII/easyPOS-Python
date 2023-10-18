@@ -14,6 +14,8 @@ from MstItem.ItemComponentDetail.ItemComponentDetail import Ui_DialogItemCompone
 from MstItem.ItemPackageDetail.ItemPackageDetail import Ui_DialogItemPackageDetail
 from MstItem.ItemAddOnDetail.ItemAddOnDetail import Ui_DialogItemAddOnDetail
 from MstItem.ItemModifierDetail.ItemModifierDetail import Ui_DialogItemModifierDetail
+from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickService import Ui_POSTouchQuickService
+
 
 class EmbeddedItemDetail(QWidget):
     def __init__(self, main_window, tab_widget):
@@ -275,11 +277,14 @@ class Menu(QMainWindow):
                     return
 
             if button_value == "Setup - Item List":
-                # item_list_tab = EmbeddedItemList(self.tab_widget, self)
                 item_list_tab = EmbeddedItemList(self, self.tab_widget)
                 self.tab_widget.addTab(item_list_tab, "Setup - Item List")
                 self.tab_widget.setCurrentWidget(item_list_tab)
-                # self.load_table_headers(item_list_tab.ui.tableWidget) #dldl
+            elif button_value == "POS - F2":
+                item_list_tab = EmbeddedItemList(self, self.tab_widget)
+                self.tab_widget.addTab(item_list_tab, "POS - F2")
+                # self.tab_widget.setCurrentWidget(item_list_tab)
+                                
                             
     def add_item_detail_tab(self):
         item_detail_tab = EmbeddedItemDetail(self)
