@@ -257,19 +257,19 @@ class EmbeddedCustomerDetailCombinedApp(QWidget):
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here
 
-class EmbeddedCustomerListCombinedApp(QWidget):
+class EmbeddedDiscountList(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
         self.main_window = main_window
-        self.ui = Ui_CustomerList()
+        self.ui = Ui_DiscountList()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonAdd.clicked.connect(self.open_CustomerDetailCombinedApp)
 
     def open_CustomerDetailCombinedApp(self):
-        item_QSD_tab = EmbeddedCustomerDetailCombinedApp(self.main_window, self.tab_widget)
-        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Customer List")
+        item_QSD_tab = EmbeddedDiscountDetail(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Discounting Detail")
         self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
         
     def close_tab(self):
@@ -279,23 +279,19 @@ class EmbeddedCustomerListCombinedApp(QWidget):
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here
 
-class EmbeddedCustomerDetailCombinedApp(QWidget):
+class EmbeddedDiscountDetail(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
         self.main_window = main_window
-        self.ui = Ui_CustomerDetail()
+        self.ui = Ui_DiscountDetail()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
-        # self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
-        # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
+        self.ui.btnSearch.clicked.connect(self.open_tab)
 
     def open_tab(self):
-        item_QSD_tab = Ui_POSTouchQuickServiceDetail(self.main_window, self.tab_widget)
-        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Customer Detail")
+        item_QSD_tab = EmbeddedDiscountSearchItemDetail(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Discount Search Item")
         self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
         
     def close_tab(self):
@@ -303,7 +299,24 @@ class EmbeddedCustomerDetailCombinedApp(QWidget):
         if index != -1:
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
-        gc.collect()  # <-- Add it here        
+        gc.collect()  # <-- Add it here    
+
+class EmbeddedDiscountSearchItemDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_DiscountSearchItemDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here  
+                    
 class Menu(QMainWindow):
     def __init__(self, tab_widget):
         super().__init__()
@@ -519,10 +532,15 @@ class Menu(QMainWindow):
                     # self.tab_widget.addTab(item_POS_tab, "Activity - POS Touch")
                     # self.tab_widget.setCurrentWidget(item_POS_tab) 
                     pass
-            elif button_value == "Customer": #dldl
+            elif button_value == "Customer":
                 item_Customer_tab = EmbeddedCustomerListCombinedApp(self, self.tab_widget)
                 self.tab_widget.addTab(item_Customer_tab, "Customer")
-                self.tab_widget.setCurrentWidget(item_Customer_tab)                
+                self.tab_widget.setCurrentWidget(item_Customer_tab)          
+            elif button_value == "Discounting": #dldl
+                item_Discount_tab = EmbeddedDiscountList(self, self.tab_widget)
+                self.tab_widget.addTab(item_Discount_tab, "Setup - Discounting List")
+                self.tab_widget.setCurrentWidget(item_Discount_tab)  
+                                      
                                                                                            
     def load_first_page(self, table_widget):
         self.current_page = 1
