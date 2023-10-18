@@ -35,6 +35,18 @@ file_path = 'POS-type.ini'
 # pos_type_value = read_pos_type_from_ini(file_path)
 # print(f"POS type is: {pos_type_value}")
 
+def add_or_select_tab(tab_widget, widget, label):
+    # Check if the tab exists
+    for index in range(tab_widget.count()):
+        if tab_widget.tabText(index) == label:
+            # Tab exists, select it
+            tab_widget.setCurrentIndex(index)
+            return
+    
+    # If the tab does not exist, add and select
+    tab_widget.addTab(widget, label)
+    tab_widget.setCurrentWidget(widget)
+    
 class EmbeddedItemDetail(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
@@ -111,8 +123,7 @@ class EmbeddedItemList(QWidget):
 
     def open_item_detail(self):  # New method
         item_detail_tab = EmbeddedItemDetail(self.main_window, self.tab_widget)
-        self.main_window.tab_widget.addTab(item_detail_tab, "Item Detail")
-        self.main_window.tab_widget.setCurrentWidget(item_detail_tab)
+        add_or_select_tab(self.main_window.tab_widget, item_detail_tab, "Setup - Item Detail")
 
 class EmbeddedPOSTouchQuickServiceList(QWidget):
     def __init__(self, main_window, tab_widget):
@@ -126,8 +137,7 @@ class EmbeddedPOSTouchQuickServiceList(QWidget):
 
     def open_POSTouchQuickServiceDetail(self):
         item_QSD_tab = EmbeddedPOSTouchQuickServiceDetail(self.main_window, self.tab_widget)
-        self.main_window.tab_widget.addTab(item_QSD_tab, "Quick Service Detail")
-        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        add_or_select_tab(self.main_window.tab_widget, item_QSD_tab, "Quick Service Detail")
         
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
@@ -144,11 +154,6 @@ class EmbeddedPOSTouchQuickServiceDetail(QWidget):
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
-        # self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
-        # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
 
     def open_tab(self):
         item_QSD_tab = Ui_POSTouchQuickServiceDetail(self.main_window, self.tab_widget)
@@ -192,11 +197,6 @@ class EmbeddedPOSTouchSalesDetail(QWidget):
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
-        # self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
-        # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
-        # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
 
     def open_tab(self):
         item_QSD_tab = Ui_POSTouchQuickServiceDetail(self.main_window, self.tab_widget)
@@ -250,7 +250,7 @@ class EmbeddedPOSBarcodeDetail(QWidget):
         self.ui.pushButton_35.clicked.connect(self.open_discount_search_item_detail)
 
     def open_tab(self):
-        item_QSD_tab = Ui_POSBarcodeTender(self.main_window, self.tab_widget)
+        item_QSD_tab = EmbeddedPOSBarcodeTender(self.main_window, self.tab_widget)
         self.main_window.tab_widget.addTab(item_QSD_tab, "Activity - Barcode Tender")
         self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
 
@@ -269,11 +269,18 @@ class EmbeddedPOSBarcodeTender(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
         self.main_window = main_window
-        self.ui = Ui_POSBarcodeTender()
-        self.ui.setupUi(self)
         self.tab_widget = tab_widget
+        self.ui = Ui_POSBarcodeTender()
+        self.ui.setupUi(self)                
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
-
+        # Connect pushButton_11 to open EmbeddedPOSBarcodeDetail
+        self.ui.pushButton_3.clicked.connect(self.open_pos_barcode_detail)
+        
+    def open_pos_barcode_detail(self):
+        barcode_detail_tab = EmbeddedPOSBarcodeDetail(self.main_window, self.tab_widget)
+        self.tab_widget.addTab(barcode_detail_tab, "Activity - POS Barcode Detail")
+        self.tab_widget.setCurrentWidget(barcode_detail_tab)
+                
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
         if index != -1:
@@ -577,31 +584,25 @@ class Menu(QMainWindow):
 
             if button_value == "Setup - Item List":
                 item_list_tab = EmbeddedItemList(self, self.tab_widget)
-                self.tab_widget.addTab(item_list_tab, "Setup - Item List")
-                self.tab_widget.setCurrentWidget(item_list_tab)
+                add_or_select_tab(self.tab_widget, item_list_tab, "Setup - Item List")
             elif button_value == "POS - F2":
                 pos_type_value = read_pos_type_from_ini(file_path)
                 print(pos_type_value)
                 if pos_type_value == 3:
                     item_POS_tab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
-                    self.tab_widget.addTab(item_POS_tab, "Activity - POS Touch Quick Service")
-                    self.tab_widget.setCurrentWidget(item_POS_tab) 
+                    add_or_select_tab(self.tab_widget, item_POS_tab, "Activity - POS Touch Quick Service")
                 elif pos_type_value == 2:
                     item_POSTouchSalesList_tab = EmbeddedPOSTouchSalesList(self, self.tab_widget)
-                    self.tab_widget.addTab(item_POSTouchSalesList_tab, "Activity - POS Touch")
-                    self.tab_widget.setCurrentWidget(item_POSTouchSalesList_tab) 
+                    add_or_select_tab(self.tab_widget, item_POSTouchSalesList_tab, "Activity - POS Touch")           
                 elif pos_type_value == 1:
                     item_Barcode_tab = EmbeddedPOSBarcode(self, self.tab_widget)
-                    self.tab_widget.addTab(item_Barcode_tab, "Activity - POS Barcode")
-                    self.tab_widget.setCurrentWidget(item_Barcode_tab)              
+                    add_or_select_tab(self.tab_widget, item_Barcode_tab, "Activity - POS Barcode")                        
             elif button_value == "Customer":
                 item_Customer_tab = EmbeddedCustomerListCombinedApp(self, self.tab_widget)
-                self.tab_widget.addTab(item_Customer_tab, "Customer")
-                self.tab_widget.setCurrentWidget(item_Customer_tab)          
+                add_or_select_tab(self.tab_widget, item_Customer_tab, "Setup - Customer")                                
             elif button_value == "Discounting": #dldl
                 item_Discount_tab = EmbeddedDiscountList(self, self.tab_widget)
-                self.tab_widget.addTab(item_Discount_tab, "Setup - Discounting List")
-                self.tab_widget.setCurrentWidget(item_Discount_tab)      
+                add_or_select_tab(self.tab_widget, item_Discount_tab, "Setup - Discounting List")                                    
                                                                                   
     def load_first_page(self, table_widget):
         self.current_page = 1
