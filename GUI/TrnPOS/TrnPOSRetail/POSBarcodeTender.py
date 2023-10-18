@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
+class Ui_POSBarcodeTender(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1366, 768)
@@ -66,18 +66,18 @@ class Ui_Form(object):
         self.pushButton_11.setStyleSheet("background-color: rgb(240, 80, 128);\n"
 "color: rgb(255, 255, 255);")
         self.pushButton_11.setObjectName("pushButton_11")
-        self.pushButton_12 = QtWidgets.QPushButton(self.frame)
-        self.pushButton_12.setGeometry(QtCore.QRect(1260, 10, 100, 40))
+        self.pushButtonClose = QtWidgets.QPushButton(self.frame)
+        self.pushButtonClose.setGeometry(QtCore.QRect(1260, 10, 100, 40))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.pushButton_12.setFont(font)
-        self.pushButton_12.setAutoFillBackground(False)
-        self.pushButton_12.setStyleSheet("background-color: rgb(243, 79, 28);\n"
+        self.pushButtonClose.setFont(font)
+        self.pushButtonClose.setAutoFillBackground(False)
+        self.pushButtonClose.setStyleSheet("background-color: rgb(243, 79, 28);\n"
 "color: rgb(255, 255, 255);")
-        self.pushButton_12.setObjectName("pushButton_12")
+        self.pushButtonClose.setObjectName("pushButtonClose")
         self.pushButton_3 = QtWidgets.QPushButton(self.frame)
         self.pushButton_3.setGeometry(QtCore.QRect(1040, 10, 100, 40))
         font = QtGui.QFont()
@@ -397,7 +397,7 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", "Tender"))
         self.pushButton_10.setText(_translate("Form", "F1 - Exact Amount"))
         self.pushButton_11.setText(_translate("Form", "F3 - Tender"))
-        self.pushButton_12.setText(_translate("Form", "Esc - Close"))
+        self.pushButtonClose.setText(_translate("Form", "Esc - Close"))
         self.pushButton_3.setText(_translate("Form", "F2 - Sales"))
         self.label_19.setText(_translate("Form", "Order No.:"))
         self.label_20.setText(_translate("Form", "Order Date:"))
@@ -451,7 +451,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
-    ui = Ui_Form()
+    ui = Ui_POSBarcodeTender()
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())

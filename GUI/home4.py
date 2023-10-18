@@ -24,8 +24,9 @@ from MstCustomer.CustomerDetail import Ui_CustomerDetail
 from MstDiscount.DiscountList import Ui_DiscountList
 from MstDiscount.DiscountDetail import Ui_DiscountDetail
 from MstDiscount.DiscountSearchItemDetail import Ui_DiscountSearchItemDetail
-
-
+from TrnPOS.TrnPOSRetail.POSBarcode import Ui_POSBarcode
+from TrnPOS.TrnPOSRetail.POSBarcodeDetail import Ui_POSBarcodeDetail
+from TrnPOS.TrnPOSRetail.POSBarcodeTender import Ui_POSBarcodeTender
 
 
 
@@ -209,6 +210,76 @@ class EmbeddedPOSTouchSalesDetail(QWidget):
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here
 
+class EmbeddedPOSBarcode(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_POSBarcode()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.ui.pushButton_11.clicked.connect(self.open_POSBarcodeDetail)
+        self.ui.pushButton_10.clicked.connect(self.open_POSBarcodeTender)  # Changed this line
+
+    def open_POSBarcodeDetail(self):
+        item_PBD_tab = EmbeddedPOSBarcodeDetail(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_PBD_tab, "Activity - POS Barcode Detail")
+        self.main_window.tab_widget.setCurrentWidget(item_PBD_tab)
+
+    def open_POSBarcodeTender(self):  # New method
+        item_PBT_tab = EmbeddedPOSBarcodeTender(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_PBT_tab, "Activity - Barcode Tender")
+        self.main_window.tab_widget.setCurrentWidget(item_PBT_tab)
+                        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedPOSBarcodeDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_POSBarcodeDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.ui.pushButton_3.clicked.connect(self.open_tab)
+        self.ui.pushButton_35.clicked.connect(self.open_discount_search_item_detail)
+
+    def open_tab(self):
+        item_QSD_tab = Ui_POSBarcodeTender(self.main_window, self.tab_widget)
+        self.main_window.tab_widget.addTab(item_QSD_tab, "Activity - Barcode Tender")
+        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+
+    def open_discount_search_item_detail(self):  # New method to open the dialog
+        self.discount_search_item_dialog = EmbeddedDiscountSearchItemDetail(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.discount_search_item_dialog.show()
+                
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedPOSBarcodeTender(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_POSBarcodeTender()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here                
 class EmbeddedCustomerListCombinedApp(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
@@ -287,12 +358,11 @@ class EmbeddedDiscountDetail(QWidget):
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
-        self.ui.btnSearch.clicked.connect(self.open_tab)
+        self.ui.btnSearch.clicked.connect(self.open_discount_search_item_detail)
 
-    def open_tab(self):
-        item_QSD_tab = EmbeddedDiscountSearchItemDetail(self.main_window, self.tab_widget)
-        self.main_window.tab_widget.addTab(item_QSD_tab, "Setup - Discount Search Item")
-        self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+    def open_discount_search_item_detail(self):  # New method to open the dialog
+        self.discount_search_item_dialog = EmbeddedDiscountSearchItemDetail(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.discount_search_item_dialog.show()
         
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
@@ -309,6 +379,7 @@ class EmbeddedDiscountSearchItemDetail(QWidget):
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.ui.pushButtonClose.clicked.connect(self.close)  # 'self.close' is a method provided by QWidget to close the widget
         
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
@@ -512,26 +583,17 @@ class Menu(QMainWindow):
                 pos_type_value = read_pos_type_from_ini(file_path)
                 print(pos_type_value)
                 if pos_type_value == 3:
-                    print("Activity - POS Touch Quick Service")
                     item_POS_tab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
                     self.tab_widget.addTab(item_POS_tab, "Activity - POS Touch Quick Service")
                     self.tab_widget.setCurrentWidget(item_POS_tab) 
                 elif pos_type_value == 2:
-                    print("Activity - POS Touch")
                     item_POSTouchSalesList_tab = EmbeddedPOSTouchSalesList(self, self.tab_widget)
                     self.tab_widget.addTab(item_POSTouchSalesList_tab, "Activity - POS Touch")
                     self.tab_widget.setCurrentWidget(item_POSTouchSalesList_tab) 
                 elif pos_type_value == 1:
-                    print("Activity - POS Barcode")
-                    item_POS_tab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
-                    self.tab_widget.addTab(item_POS_tab, "Activity - POS Barcode")
-                    self.tab_widget.setCurrentWidget(item_POS_tab) 
-                elif pos_type_value == 4:
-                    print("Activity - POS Retail")
-                    # item_POS_tab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
-                    # self.tab_widget.addTab(item_POS_tab, "Activity - POS Touch")
-                    # self.tab_widget.setCurrentWidget(item_POS_tab) 
-                    pass
+                    item_Barcode_tab = EmbeddedPOSBarcode(self, self.tab_widget)
+                    self.tab_widget.addTab(item_Barcode_tab, "Activity - POS Barcode")
+                    self.tab_widget.setCurrentWidget(item_Barcode_tab)              
             elif button_value == "Customer":
                 item_Customer_tab = EmbeddedCustomerListCombinedApp(self, self.tab_widget)
                 self.tab_widget.addTab(item_Customer_tab, "Customer")
@@ -539,9 +601,8 @@ class Menu(QMainWindow):
             elif button_value == "Discounting": #dldl
                 item_Discount_tab = EmbeddedDiscountList(self, self.tab_widget)
                 self.tab_widget.addTab(item_Discount_tab, "Setup - Discounting List")
-                self.tab_widget.setCurrentWidget(item_Discount_tab)  
-                                      
-                                                                                           
+                self.tab_widget.setCurrentWidget(item_Discount_tab)      
+                                                                                  
     def load_first_page(self, table_widget):
         self.current_page = 1
         self.load_table_headers(table_widget)
