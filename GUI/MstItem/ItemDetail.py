@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDate, Qt
 
 
-class Ui_Form(object):
+class Ui_ItemDetail(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1365, 768)

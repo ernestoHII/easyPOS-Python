@@ -6,52 +6,65 @@ from PyQt5.QtWidgets import QHBoxLayout, QTableWidget, QTableWidgetItem, QComboB
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QTimer
 from functools import partial
-from MstItem.ItemDetail import Ui_Form
+from MstItem.ItemDetail import Ui_ItemDetail
 from MstItem.ItemList import Ui_FormList
 from PyQt5.QtWidgets import QMessageBox
-from MstItem.ItemPriceDetail.ItemPriceDetail import Ui_DialogIPD
+from MstItem.ItemPriceDetail.ItemPriceDetail import Ui_DialogItemPriceDetail
 from MstItem.ItemComponentDetail.ItemComponentDetail import Ui_DialogItemComponentDetail
 from MstItem.ItemPackageDetail.ItemPackageDetail import Ui_DialogItemPackageDetail
 from MstItem.ItemAddOnDetail.ItemAddOnDetail import Ui_DialogItemAddOnDetail
 from MstItem.ItemModifierDetail.ItemModifierDetail import Ui_DialogItemModifierDetail
-from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickService import Ui_POSTouchQuickService
-
+from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceList import Ui_POSTouchQuickService
+from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceDetail import Ui_POSTouchQuickServiceDetail
 
 class EmbeddedItemDetail(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
         self.main_window = main_window
-        self.resize(int(self.main_window.width() * 0.5), int(self.main_window.height() * 0.5))        
-        self.ui = Ui_Form()
+        self.ui = Ui_ItemDetail()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
-        self.ui.pushButtonAddItemPrice.clicked.connect(self.open_dialog_ipd)
-        self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
-        self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
-        self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
-        self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
+        self.ui.pushButtonAddItemPrice.clicked.connect(self.open_ItemPriceDetail)
+        self.ui.pushButtonAddItemComponent.clicked.connect(self.open_ItemComponentDetail)
+        self.ui.pushButtonAddItemPackage.clicked.connect(self.open_Ui_DialogItemPackageDetail)
+        self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_Ui_DialogItemAddOnDetail)
+        self.ui.pushButtonAddItemModifier.clicked.connect(self.open_Ui_DialogItemModifierDetail)
 
-    def open_dialog_ipd(self):
+    def open_ItemPriceDetail(self):
         self.dialog = QDialog(self)
-        self.ui_dialog = Ui_DialogIPD()
+        self.ui_dialog = Ui_DialogItemPriceDetail()
         self.ui_dialog.setupUi(self.dialog)
+        self.ui_dialog.pushButton_7.clicked.connect(self.dialog.close)
+        self.dialog.show()
+    
+    def open_ItemComponentDetail(self):
+        self.dialog = QDialog(self)
         self.ui_ItemComponentDetail = Ui_DialogItemComponentDetail()
         self.ui_ItemComponentDetail.setupUi(self.dialog)        
-        self.ui_ItemPackageDetail = Ui_DialogItemPackageDetail()
-        self.ui_ItemPackageDetail.setupUi(self.dialog)        
-        self.ui_ItemAddOnDetail = Ui_DialogItemAddOnDetail()
-        self.ui_ItemAddOnDetail.setupUi(self.dialog)  
-        self.ui_ItemModifierDetail = Ui_DialogItemModifierDetail()
-        self.ui_ItemModifierDetail.setupUi(self.dialog)                  
-        # Connect pushButton_7's clicked signal to QDialog's close method
-        self.ui_dialog.pushButton_7.clicked.connect(self.dialog.close)
         self.ui_ItemComponentDetail.pushButton_7.clicked.connect(self.dialog.close)
-        self.ui_ItemPackageDetail.pushButton_7.clicked.connect(self.dialog.close)
-        self.ui_ItemAddOnDetail.pushButton_7.clicked.connect(self.dialog.close)
-        self.ui_ItemModifierDetail.pushButton_7.clicked.connect(self.dialog.close)
         self.dialog.show()
 
+    def open_Ui_DialogItemPackageDetail(self):    
+        self.dialog = QDialog(self)                    
+        self.ui_ItemPackageDetail = Ui_DialogItemPackageDetail()
+        self.ui_ItemPackageDetail.setupUi(self.dialog)   
+        self.ui_ItemPackageDetail.pushButton_7.clicked.connect(self.dialog.close)
+        self.dialog.show()
+
+    def open_Ui_DialogItemAddOnDetail(self):               
+        self.dialog = QDialog(self)              
+        self.ui_ItemAddOnDetail = Ui_DialogItemAddOnDetail()
+        self.ui_ItemAddOnDetail.setupUi(self.dialog)  
+        self.ui_ItemAddOnDetail.pushButton_7.clicked.connect(self.dialog.close)
+        self.dialog.show()
+        
+    def open_Ui_DialogItemModifierDetail(self):        
+        self.dialog = QDialog(self)        
+        self.ui_ItemModifierDetail = Ui_DialogItemModifierDetail()
+        self.ui_ItemModifierDetail.setupUi(self.dialog)                          
+        self.ui_ItemModifierDetail.pushButton_7.clicked.connect(self.dialog.close)        
+        self.dialog.show()
         
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
@@ -64,17 +77,11 @@ class EmbeddedItemList(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
         self.main_window = main_window
-
         self.ui = Ui_FormList()
         self.ui.setupUi(self)
-        
-        # Resize after setupUi
-        self.resize(int(self.main_window.width() * 0.5), int(self.main_window.height() * 0.5))
-        
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonAdd.clicked.connect(self.open_item_detail)
-
 
     def close_tab(self):
         # index = self.main_window.tab_widget.indexOf(self)
@@ -88,7 +95,59 @@ class EmbeddedItemList(QWidget):
         item_detail_tab = EmbeddedItemDetail(self.main_window, self.tab_widget)
         self.main_window.tab_widget.addTab(item_detail_tab, "Item Detail")
         self.main_window.tab_widget.setCurrentWidget(item_detail_tab)
-                                                   
+
+# class EmbeddedPOSTouchQuickServiceList(QWidget):
+#     def __init__(self, main_window, tab_widget):
+#         super().__init__()
+#         self.main_window = main_window
+#         self.ui = Ui_POSTouchQuickService()
+#         self.ui.setupUi(self)
+#         self.tab_widget = tab_widget
+#         self.ui.pushButtonClose.clicked.connect(self.close_tab)
+#         self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
+#         # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
+#         # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
+#         # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
+#         # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
+
+#     def open_tab(self):
+#         item_QSD_tab = EmbeddedPOSTouchQuickServiceDetail(self.main_window, self.tab_widget)
+#         self.main_window.tab_widget.addTab(item_QSD_tab, "Quick Service Detail")
+#         self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        
+#     def close_tab(self):
+#         index = self.tab_widget.indexOf(self)
+#         if index != -1:
+#             self.tab_widget.removeTab(index)
+#             self.deleteLater()  # Ensure the widget and its children are marked for deletion
+#         gc.collect()  # <-- Add it here
+
+# class EmbeddedPOSTouchQuickServiceDetail(QWidget):
+#     def __init__(self, main_window, tab_widget):
+#         super().__init__()
+#         self.main_window = main_window
+#         self.ui = Ui_POSTouchQuickServiceDetail()
+#         self.ui.setupUi(self)
+#         self.tab_widget = tab_widget
+#         self.ui.pushButtonClose.clicked.connect(self.close_tab)
+#         # self.ui.pushButtonWalkIn.clicked.connect(self.open_tab)
+#         # self.ui.pushButtonAddItemComponent.clicked.connect(self.open_dialog_ipd)
+#         # self.ui.pushButtonAddItemPackage.clicked.connect(self.open_dialog_ipd)
+#         # self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_dialog_ipd)
+#         # self.ui.pushButtonAddItemModifier.clicked.connect(self.open_dialog_ipd)
+
+#     def open_tab(self):
+#         item_QSD_tab = Ui_POSTouchQuickServiceDetail(self.main_window, self.tab_widget)
+#         self.main_window.tab_widget.addTab(item_QSD_tab, "Quick Service Detail")
+#         self.main_window.tab_widget.setCurrentWidget(item_QSD_tab)
+        
+#     def close_tab(self):
+#         index = self.tab_widget.indexOf(self)
+#         if index != -1:
+#             self.tab_widget.removeTab(index)
+#             self.deleteLater()  # Ensure the widget and its children are marked for deletion
+#         gc.collect()  # <-- Add it here
+                                                                   
 class Menu(QMainWindow):
     def __init__(self, tab_widget):
         super().__init__()
@@ -281,17 +340,16 @@ class Menu(QMainWindow):
                 self.tab_widget.addTab(item_list_tab, "Setup - Item List")
                 self.tab_widget.setCurrentWidget(item_list_tab)
             elif button_value == "POS - F2":
-                item_list_tab = EmbeddedItemList(self, self.tab_widget)
-                self.tab_widget.addTab(item_list_tab, "POS - F2")
-                # self.tab_widget.setCurrentWidget(item_list_tab)
-                                
-                            
-    def add_item_detail_tab(self):
-        item_detail_tab = EmbeddedItemDetail(self)
-        self.tab_widget.addTab(item_detail_tab, "Item Detail")
+                item_POS_tab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
+                self.tab_widget.addTab(item_POS_tab, "POS - F2")
+                self.tab_widget.setCurrentWidget(item_POS_tab)                        
+                                    
+    # def add_item_detail_tab(self):
+    #     item_detail_tab = EmbeddedItemDetail(self)
+    #     self.tab_widget.addTab(item_detail_tab, "Item Detail")
         
-        # Set the focus to the newly created "EmbeddedItemDetail" tab
-        self.tab_widget.setCurrentWidget(item_detail_tab)
+    #     # Set the focus to the newly created "EmbeddedItemDetail" tab
+    #     self.tab_widget.setCurrentWidget(item_detail_tab)
 
     def load_first_page(self, table_widget):
         self.current_page = 1

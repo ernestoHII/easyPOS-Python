@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_DialogIPD(object):
+class Ui_DialogItemPriceDetail(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 350)
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_DialogIPD()
+    ui = Ui_DialogItemPriceDetail()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

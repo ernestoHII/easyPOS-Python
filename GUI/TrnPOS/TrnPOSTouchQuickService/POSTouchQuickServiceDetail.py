@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
+class Ui_POSTouchQuickServiceDetail(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1366, 768)
@@ -691,7 +691,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
-    ui = Ui_Form()
+    ui = Ui_POSTouchQuickServiceDetail()
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
