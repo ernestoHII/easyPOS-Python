@@ -42,12 +42,12 @@ from SysTables.TaxDetail.TaxDetail import UI_TaxDetail
 from SysTables.TerminalDetail.TerminalDetail import UI_TerminalDetail
 from SysTables.UnitDetail.UnitDetail import UI_UnitDetail
 from SysLogin.Login import UI_Login
-from .TrnPOS.TrnPOSSalesGlobalComponent.POSSearchCurrency import UI_POSSearchCurrency
-from .TrnPOS.TrnPOSSalesGlobalComponent.POSSalesItemDetail import UI_POSSalesItemDetail
-from .TrnPOS.TrnPOSSalesGlobalComponent.POSSalesCustomerDetail import UI_POSSalesCustomerDetail
-from .TrnPOS.TrnPOSSalesGlobalComponent.POSReturnRefund import UI_POSReturnRefund
-from .TrnPOS.TrnPOSSalesGlobalComponent.POSDiscount import UI_POSDiscount
-from .TrnPOS.TrnPOSSalesGlobalComponent.POSDeliveryCustomerInformation import UI_POSDeliveryCustomerInformation
+from TrnPOS.TrnPOSSalesGlobalComponent.POSSearchCurrency import UI_POSSearchCurrency
+from TrnPOS.TrnPOSSalesGlobalComponent.POSSalesItemDetail import UI_POSSalesItemDetail
+from TrnPOS.TrnPOSSalesGlobalComponent.POSSalesCustomerDetail import UI_POSSalesCustomerDetail
+from TrnPOS.TrnPOSSalesGlobalComponent.POSReturnRefund import UI_POSReturnRefund
+from TrnPOS.TrnPOSSalesGlobalComponent.POSDiscount import UI_POSDiscount
+from TrnPOS.TrnPOSSalesGlobalComponent.POSDeliveryCustomerInformation import UI_POSDeliveryCustomerInformation
 
 
 file_path = 'POS-type.ini'
@@ -154,18 +154,34 @@ class EmbeddedPOSTouchQuickServiceList(QWidget):
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonWalkIn.clicked.connect(self.open_POSTouchQuickServiceDetail)
+        self.ui.pushButtonDelivery.clicked.connect(self.open_delivery)
 
+    def open_delivery(self):
+        self.popup = EmbeddedPOSDeliveryCustomerInformation(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()    
     def open_POSTouchQuickServiceDetail(self):
         pos_tab = EmbeddedPOSTouchQuickServiceDetail(self.main_window, self.tab_widget)
         add_or_select_tab(self.main_window.tab_widget, pos_tab, "Quick Service Detail")
-        
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
         if index != -1:
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here
-
+class EmbeddedPOSDeliveryCustomerInformation(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_POSDeliveryCustomerInformation()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)     
+        self.ui.pushButtonOk.clicked.connect(self.open_POSTouchQuickServiceDetail) 
+    def open_POSTouchQuickServiceDetail(self):
+        pos_tab = EmbeddedPOSTouchQuickServiceDetail(self.main_window, self.tab_widget)
+        add_or_select_tab(self.main_window.tab_widget, pos_tab, "Quick Service Detail")
+        self.close()
+        
 class EmbeddedPOSTouchQuickServiceDetail(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
@@ -176,7 +192,31 @@ class EmbeddedPOSTouchQuickServiceDetail(QWidget):
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonTender.clicked.connect(self.open_Tender)  # Changed this line
         self.ui.pushButtonSearchItem.clicked.connect(self.open_discount_search_item_detail)
+        self.ui.pushButtonOverride.clicked.connect(self.open_override)
+        self.ui.pushButtonDiscount.clicked.connect(self.open_discount)
+        self.ui.pushButtonReturn.clicked.connect(self.open_return)
+        self.ui.pushButtonLock.clicked.connect(self.open_lock)
+        self.ui.pushButtonCurrency.clicked.connect(self.open_currencyk)
+        self.ui.pushButtonItem1.clicked.connect(self.open_sales_item)
 
+    def open_sales_item(self):  # New method to open the dialog
+        self.popup = EmbeddedPOSSalesItemDetail(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()     
+    def open_currencyk(self):  # New method to open the dialog
+        self.popup = EmbeddedPOSSearchCurrency(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()       
+    def open_lock(self):  # New method to open the dialog
+        self.popup = EmbeddedPOSSalesCustomerDetail(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()   
+    def open_return(self):  # New method to open the dialog
+        self.popup = EmbeddedReturn(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()          
+    def open_discount(self):  # New method to open the dialog
+        self.popup = EmbeddedDiscount(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()           
+    def open_override(self):  # New method to open the dialog
+        self.popup = EmbeddedLogin(self.main_window, self.tab_widget)  # Pass both required arguments
+        self.popup.show()                
     def open_discount_search_item_detail(self):  # New method to open the dialog
         self.popup = EmbeddedDiscountSearchItemDetail(self.main_window, self.tab_widget)  # Pass both required arguments
         self.popup.show()
@@ -191,8 +231,58 @@ class EmbeddedPOSTouchQuickServiceDetail(QWidget):
         if index != -1:
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
-        gc.collect()  # <-- Add it here
-                                                                   
+        gc.collect()  # <-- Add it here 
+
+
+class EmbeddedPOSSalesItemDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_POSSalesItemDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)  
+class EmbeddedPOSSalesCustomerDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_POSSalesCustomerDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)  
+
+class EmbeddedPOSSearchCurrency(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_POSSearchCurrency()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)  
+class EmbeddedReturn(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_POSReturnRefund()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)  
+class EmbeddedDiscount(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_POSDiscount()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)         
+class EmbeddedLogin(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_Login()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)                                                                     
 class EmbeddedPOSTouchSalesList(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
