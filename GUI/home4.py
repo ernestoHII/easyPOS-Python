@@ -41,6 +41,13 @@ from SysTables.SupplierDetail.SupplierDetail import UI_SupplierDetail
 from SysTables.TaxDetail.TaxDetail import UI_TaxDetail
 from SysTables.TerminalDetail.TerminalDetail import UI_TerminalDetail
 from SysTables.UnitDetail.UnitDetail import UI_UnitDetail
+from SysLogin.Login import UI_Login
+from .TrnPOS.TrnPOSSalesGlobalComponent.POSSearchCurrency import UI_POSSearchCurrency
+from .TrnPOS.TrnPOSSalesGlobalComponent.POSSalesItemDetail import UI_POSSalesItemDetail
+from .TrnPOS.TrnPOSSalesGlobalComponent.POSSalesCustomerDetail import UI_POSSalesCustomerDetail
+from .TrnPOS.TrnPOSSalesGlobalComponent.POSReturnRefund import UI_POSReturnRefund
+from .TrnPOS.TrnPOSSalesGlobalComponent.POSDiscount import UI_POSDiscount
+from .TrnPOS.TrnPOSSalesGlobalComponent.POSDeliveryCustomerInformation import UI_POSDeliveryCustomerInformation
 
 
 file_path = 'POS-type.ini'
@@ -459,18 +466,40 @@ class EmbeddedSYSTables(QWidget):
         self.ui.pushButtonAdd.clicked.connect(self.open_pop1)
 
     def open_pop1(self): 
-        # Print the titles of all the tabs for debugging
-        # for i in range(self.tab_widget.count()):
-        #     print(f"Tab {i}: {self.tab_widget.tabText(i)}")
-
         # Determine the action based on the title of the currently selected tab
         current_tab_text = self.tab_widget.tabText(self.tab_widget.currentIndex())
-        print(current_tab_text)
         if current_tab_text == "Account":
             self.popup = EmbeddedAccountDetail(self.main_window, self.tab_widget)
             self.popup.show()  # Make sure to show the popup.            
         elif current_tab_text == "Pay Type":
             self.popup = EmbeddedPayTypeDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Bank":
+            self.popup = EmbeddedBankDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Unit":
+            self.popup = EmbeddedUnitDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Terminal":
+            self.popup = EmbeddedTerminalDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Tax":
+            self.popup = EmbeddedTaxDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Supplier":
+            self.popup = EmbeddedSupplierDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Period":
+            self.popup = EmbeddedPeriodDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Form":
+            self.popup = EmbeddedFormDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Item Category":
+            self.popup = EmbeddedItemCategoryDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+        elif current_tab_text == "Card Type":
+            self.popup = EmbeddedCardTypeDetail(self.main_window, self.tab_widget)
             self.popup.show()  # Make sure to show the popup.
 
     def close_tab(self):
@@ -479,6 +508,65 @@ class EmbeddedSYSTables(QWidget):
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here
+        
+class EmbeddedBankDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_BankDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)    
+
+class EmbeddedCardTypeDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_CardTypeDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)  
+class EmbeddedFormDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_FormDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)      
+
+class EmbeddedPeriodDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_PeriodDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)      
+class EmbeddedSupplierDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_SupplierDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)      
+class EmbeddedTaxDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_TaxDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)      
+class EmbeddedTerminalDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_TerminalDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)      
 class EmbeddedAccountDetail(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
@@ -486,7 +574,24 @@ class EmbeddedAccountDetail(QWidget):
         self.ui = UI_AccountDetail()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget    
-        self.ui.pushButtonClose.clicked.connect(self.close)    
+        self.ui.pushButtonClose.clicked.connect(self.close)      
+class EmbeddedUnitDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_UnitDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)     
+         
+class EmbeddedItemCategoryDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_ItemCategoryDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.btnClose.clicked.connect(self.close)       
 
 class EmbeddedPayTypeDetail(QWidget):
     def __init__(self, main_window, tab_widget):
@@ -495,7 +600,8 @@ class EmbeddedPayTypeDetail(QWidget):
         self.ui = UI_PayTypeDetail()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget    
-        self.ui.pushButtonClose.clicked.connect(self.close)  
+        self.ui.pushButtonClose.clicked.connect(self.close)    
+                        
 class Menu(QMainWindow):
     def __init__(self, tab_widget):
         super().__init__()
@@ -693,9 +799,6 @@ class Menu(QMainWindow):
             elif button_value == "User":
                 userTab = EmbeddedUserList(self, self.tab_widget)
                 add_or_select_tab(self.tab_widget, userTab, "Setup - User List")    
-            # elif button_value == "System Tables": #dldl
-            #     systemTab = EmbeddedSYSTables(self, self.tab_widget)
-            #     add_or_select_tab(self.tab_widget, systemTab, "System - System Tables")    
             elif button_value == "System Tables":
                 sub_tab_widget = QTabWidget()  # This is just an example. You should create or reference the actual sub-tab widget here.
                 systemTablesInstance = EmbeddedSYSTables(self, sub_tab_widget)
