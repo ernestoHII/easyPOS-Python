@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Tables.ui'
+# Form implementation generated from reading ui file 'SYSTables.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
+class Ui_SYSTables(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1366, 771)
@@ -1014,7 +1014,7 @@ class Ui_Form(object):
         self.tabWidget.addTab(self.tabBank, "")
 
         self.retranslateUi(Form)
-        self.tabWidget.setCurrentIndex(10)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -1156,7 +1156,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
-    ui = Ui_Form()
+    ui = Ui_SYSTables()
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())

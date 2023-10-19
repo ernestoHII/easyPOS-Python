@@ -29,12 +29,18 @@ from TrnPOS.TrnPOSRetail.POSBarcodeDetail import Ui_POSBarcodeDetail
 from TrnPOS.TrnPOSRetail.POSBarcodeTender import Ui_POSBarcodeTender
 from MstUser.UserList import Ui_UserList
 from MstUser.UserDetail import Ui_UserDetail
-from SysTables.AccountDetail.AccountDetail import Ui_AccountDetail
-from SysTables.AccountDetail.AccountDetail import Ui_AccountDetail
-from SysTables.AccountDetail.AccountDetail import Ui_AccountDetail
-from SysTables.AccountDetail.AccountDetail import Ui_AccountDetail
-from SysTables.AccountDetail.AccountDetail import Ui_AccountDetail
-from SysTables.AccountDetail.AccountDetail import Ui_AccountDetail
+from SysTables.Tables import Ui_SYSTables
+from SysTables.AccountDetail.AccountDetail import UI_AccountDetail
+from SysTables.BankDetail.BankDetail import UI_BankDetail
+from SysTables.CardTypeDetail.CardTypeDetail import UI_CardTypeDetail
+from SysTables.FormDetail.FormDetail import UI_FormDetail
+from SysTables.ItemCategoryDetail.ItemCategoryDetail import UI_ItemCategoryDetail
+from SysTables.PayTypeDetail.PayTypeDetail import UI_PayTypeDetail
+from SysTables.PeriodDetail.PeriodDetail import UI_PeriodDetail
+from SysTables.SupplierDetail.SupplierDetail import UI_SupplierDetail
+from SysTables.TaxDetail.TaxDetail import UI_TaxDetail
+from SysTables.TerminalDetail.TerminalDetail import UI_TerminalDetail
+from SysTables.UnitDetail.UnitDetail import UI_UnitDetail
 
 
 file_path = 'POS-type.ini'
@@ -294,6 +300,7 @@ class EmbeddedPOSBarcodeTender(QWidget):
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here                
+
 class EmbeddedCustomerListCombinedApp(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
@@ -394,6 +401,101 @@ class EmbeddedDiscountSearchItemDetail(QWidget):
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here  
                     
+class EmbeddedUserList(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_UserList()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.btnClose.clicked.connect(self.close_tab)
+        self.ui.btnAdd.clicked.connect(self.open_POSTouchQuickServiceDetail)
+
+    def open_POSTouchQuickServiceDetail(self):
+        pos_tab = EmbeddedUserDetail(self.main_window, self.tab_widget)
+        add_or_select_tab(self.main_window.tab_widget, pos_tab, "Setup - User Detail")
+        
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedUserDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_UserDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget
+        self.ui.btnClose.clicked.connect(self.close_tab)
+        # self.ui.pushButtonTender.clicked.connect(self.open_pop1)  # Changed this line
+        # self.ui.pushButtonSearchItem.clicked.connect(self.open_pop2)
+
+    def open_pop1(self):  # New method to open the dialog
+        # self.popup = EmbeddedDiscountSearchItemDetail(self.main_window, self.tab_widget)  # Pass both required arguments
+        # self.popup.show()
+        pass
+    def open_pop2(self):  # New method to open the dialog
+        # self.popup = EmbeddedPOSBarcodeTender(self.main_window, self.tab_widget)  # Pass both required arguments
+        # self.popup.show()  
+        pass              
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+
+class EmbeddedSYSTables(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = Ui_SYSTables()
+        self.ui.setupUi(self)
+        self.tab_widget = self.ui.tabWidget        
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.ui.pushButtonAdd.clicked.connect(self.open_pop1)
+
+    def open_pop1(self): 
+        # Print the titles of all the tabs for debugging
+        # for i in range(self.tab_widget.count()):
+        #     print(f"Tab {i}: {self.tab_widget.tabText(i)}")
+
+        # Determine the action based on the title of the currently selected tab
+        current_tab_text = self.tab_widget.tabText(self.tab_widget.currentIndex())
+        print(current_tab_text)
+        if current_tab_text == "Account":
+            self.popup = EmbeddedAccountDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.            
+        elif current_tab_text == "Pay Type":
+            self.popup = EmbeddedPayTypeDetail(self.main_window, self.tab_widget)
+            self.popup.show()  # Make sure to show the popup.
+
+    def close_tab(self):
+        index = self.tab_widget.indexOf(self)
+        if index != -1:
+            self.tab_widget.removeTab(index)
+            self.deleteLater()  # Ensure the widget and its children are marked for deletion
+        gc.collect()  # <-- Add it here
+class EmbeddedAccountDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_AccountDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)    
+
+class EmbeddedPayTypeDetail(QWidget):
+    def __init__(self, main_window, tab_widget):
+        super().__init__()
+        self.main_window = main_window
+        self.ui = UI_PayTypeDetail()
+        self.ui.setupUi(self)
+        self.tab_widget = tab_widget    
+        self.ui.pushButtonClose.clicked.connect(self.close)  
 class Menu(QMainWindow):
     def __init__(self, tab_widget):
         super().__init__()
@@ -588,13 +690,18 @@ class Menu(QMainWindow):
             elif button_value == "Discounting":
                 discountTab = EmbeddedDiscountList(self, self.tab_widget)
                 add_or_select_tab(self.tab_widget, discountTab, "Setup - Discounting List")                                    
-            elif button_value == "User": #dldl
-                User_Tab = Ui_UserList(self, self.tab_widget)
-                add_or_select_tab(self.tab_widget, User_Tab, "Setup - User List")    
-            elif button_value == "System Tables": #dldl
-                systemTab = Ui_AccountDetail(self, self.tab_widget)
-                add_or_select_tab(self.tab_widget, systemTab, "System - System Tables")    
-                                                                                                                  
+            elif button_value == "User":
+                userTab = EmbeddedUserList(self, self.tab_widget)
+                add_or_select_tab(self.tab_widget, userTab, "Setup - User List")    
+            # elif button_value == "System Tables": #dldl
+            #     systemTab = EmbeddedSYSTables(self, self.tab_widget)
+            #     add_or_select_tab(self.tab_widget, systemTab, "System - System Tables")    
+            elif button_value == "System Tables":
+                sub_tab_widget = QTabWidget()  # This is just an example. You should create or reference the actual sub-tab widget here.
+                systemTablesInstance = EmbeddedSYSTables(self, sub_tab_widget)
+                add_or_select_tab(self.tab_widget, systemTablesInstance, "System - System Tables")
+          
+                                                                                                                        
     def load_first_page(self, table_widget):
         self.current_page = 1
         self.load_table_headers(table_widget)

@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
+class UI_PayTypeDetail(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(450, 200)
@@ -47,17 +47,17 @@ class Ui_Form(object):
         self.btnSave.setStyleSheet("background-color: rgb(240, 80, 128);\n"
 "color: rgb(255, 255, 255);")
         self.btnSave.setObjectName("btnSave")
-        self.btnClose = QtWidgets.QPushButton(self.frame)
-        self.btnClose.setGeometry(QtCore.QRect(360, 10, 81, 40))
+        self.pushButtonClose = QtWidgets.QPushButton(self.frame)
+        self.pushButtonClose.setGeometry(QtCore.QRect(360, 10, 81, 40))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.btnClose.setFont(font)
-        self.btnClose.setStyleSheet("background-color: rgb(243, 79, 28);\n"
+        self.pushButtonClose.setFont(font)
+        self.pushButtonClose.setStyleSheet("background-color: rgb(243, 79, 28);\n"
 "color: rgb(255, 255, 255);")
-        self.btnClose.setObjectName("btnClose")
+        self.pushButtonClose.setObjectName("pushButtonClose")
         self.frame_2 = QtWidgets.QFrame(Form)
         self.frame_2.setGeometry(QtCore.QRect(0, 60, 450, 140))
         self.frame_2.setStyleSheet("background-color: rgb(234, 234, 234);")
@@ -112,7 +112,7 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.lblPayType.setText(_translate("Form", "Pay Type Detail"))
         self.btnSave.setText(_translate("Form", "Enter - Save"))
-        self.btnClose.setText(_translate("Form", "Esc - Close"))
+        self.pushButtonClose.setText(_translate("Form", "Esc - Close"))
         self.lblCode.setText(_translate("Form", "Code:"))
         self.lblPayType_2.setText(_translate("Form", "Pay Type:"))
         self.lblAccount.setText(_translate("Form", "Account:"))
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
-    ui = Ui_Form()
+    ui = UI_PayTypeDetail()
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())

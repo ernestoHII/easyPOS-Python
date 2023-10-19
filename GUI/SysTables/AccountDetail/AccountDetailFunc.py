@@ -1,7 +1,7 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGridLayout, QTableWidgetItem, QCheckBox, QLineEdit
 from PyQt5.QtCore import Qt, QDateTime
-from AccountDetail.AccountDetail import Ui_Form
+from AccountDetail.AccountDetail import UI_AccountDetail
 import pyodbc
 from dotenv import load_dotenv
 from tkinter import * 
@@ -15,7 +15,7 @@ class AccountDetailCombinedApp(QMainWindow):
         super().__init__()
         self.account_id = accountId
         # Create an instance of Ui_Form
-        self.ui_form = Ui_Form()
+        self.ui_form = UI_AccountDetail()
         self.ui_form.setupUi(self)
         # Embed the QTableWidget from Ui_Form into the main window
         self.grid_layout = QGridLayout(self.ui_form.frame)

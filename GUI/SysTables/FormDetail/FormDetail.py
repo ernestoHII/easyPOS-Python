@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
+class UI_FormDetail(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(450, 200)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
-    ui = Ui_Form()
+    ui = UI_FormDetail()
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
