@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QHBoxLayout, QTableWidget, QTableWidgetItem, QComboB
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QTimer
 from functools import partial
-from MstItem.ItemDetail import Ui_Form
+from MstItem.ItemDetail import Ui_ItemDetail
 from MstItem.ItemList import Ui_FormList
 from PyQt5.QtWidgets import QMessageBox
-from MstItem.ItemPriceDetail.ItemPriceDetail import Ui_DialogIPD
+from MstItem.ItemPriceDetail.ItemPriceDetail import Ui_DialogItemPriceDetail
 from MstItem.ItemComponentDetail.ItemComponentDetail import Ui_DialogItemComponentDetail
 from MstItem.ItemPackageDetail.ItemPackageDetail import Ui_DialogItemPackageDetail
 from MstItem.ItemAddOnDetail.ItemAddOnDetail import Ui_DialogItemAddOnDetail
@@ -20,7 +20,7 @@ class EmbeddedItemDetail(QWidget):
         super().__init__()
         self.main_window = main_window
         self.resize(int(self.main_window.width() * 0.5), int(self.main_window.height() * 0.5))        
-        self.ui = Ui_Form()
+        self.ui = Ui_DialogItemPriceDetail()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
@@ -32,7 +32,7 @@ class EmbeddedItemDetail(QWidget):
 
     def open_dialog_ipd(self):
         self.dialog = QDialog(self)
-        self.ui_dialog = Ui_DialogIPD()
+        self.ui_dialog = Ui_DialogItemPriceDetail()
         self.ui_dialog.setupUi(self.dialog)
         self.ui_ItemComponentDetail = Ui_DialogItemComponentDetail()
         self.ui_ItemComponentDetail.setupUi(self.dialog)        

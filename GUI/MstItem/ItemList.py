@@ -158,6 +158,17 @@ class Ui_FormList(object):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+    def load_table_data(self, data):
+        # 'data' should be a list or data source containing the data to be loaded
+        table = self.tableWidget
+        table.setRowCount(len(data))
+        table.setColumnCount(len(data[0]))  # Assuming all rows have the same number of columns
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(row_data):
+                item = QtWidgets.QTableWidgetItem(str(cell_data))
+                table.setItem(row_idx, col_idx, item)
+                    
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))

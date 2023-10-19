@@ -5,12 +5,12 @@ from PyQt5.QtWidgets import QHBoxLayout, QTableWidget, QTableWidgetItem, QComboB
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QTimer
 from functools import partial
-from MstItem.ItemDetail import Ui_Form
+from MstItem.ItemDetail import Ui_ItemDetail
 
 class EmbeddedItemDetail(QWidget):
     def __init__(self):
         super().__init__()
-        self.ui = Ui_Form()
+        self.ui = Ui_ItemDetail()
         self.ui.setupUi(self)  # Setting up the Ui_Form inside this QWidget
 
 class Menu(QMainWindow):

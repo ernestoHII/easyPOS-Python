@@ -124,7 +124,7 @@ class EmbeddedItemDetail(QWidget):
         gc.collect()  # <-- Add it here
 
 class EmbeddedItemList(QWidget):
-    def __init__(self, main_window, tab_widget):
+    def __init__(self, main_window, tab_widget, menu_instance):
         super().__init__()
         self.main_window = main_window
         self.ui = Ui_FormList()
@@ -133,6 +133,10 @@ class EmbeddedItemList(QWidget):
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonAdd.clicked.connect(self.open_item_detail)
 
+        # Call the load_table_headers method on the menu_instance
+        menu_instance.load_table_headers(self.ui.tableWidget)      
+                
+          
     def close_tab(self):
         # index = self.main_window.tab_widget.indexOf(self)
         index = self.tab_widget.indexOf(self)
@@ -232,7 +236,6 @@ class EmbeddedPOSTouchQuickServiceDetail(QWidget):
             self.tab_widget.removeTab(index)
             self.deleteLater()  # Ensure the widget and its children are marked for deletion
         gc.collect()  # <-- Add it here 
-
 
 class EmbeddedPOSSalesItemDetail(QWidget):
     def __init__(self, main_window, tab_widget):
@@ -866,7 +869,8 @@ class Menu(QMainWindow):
                     return
 
             if button_value == "Setup - Item List":
-                listTab = EmbeddedItemList(self, self.tab_widget)
+                # listTab = EmbeddedItemList(self, self.tab_widget)
+                listTab = EmbeddedItemList(self, self.tab_widget, self)
                 add_or_select_tab(self.tab_widget, listTab, "Setup - Item List")
             elif button_value == "POS - F2":
                 pos_type_value = read_pos_type_from_ini(file_path)
