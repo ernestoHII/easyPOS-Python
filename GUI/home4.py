@@ -1,54 +1,4 @@
-import sys, requests, gc, os
-import configparser
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QPushButton, QDialog
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QSizePolicy, QTabWidget, QLineEdit, QFrame, QProgressDialog
-from PyQt5.QtWidgets import QHBoxLayout, QTableWidget, QTableWidgetItem, QComboBox, QHeaderView, QDesktopWidget
-from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtCore import Qt, QTimer
-from functools import partial
-from MstItem.ItemDetail import Ui_ItemDetail
-from MstItem.ItemList import Ui_FormList
-from PyQt5.QtWidgets import QMessageBox
-from MstItem.ItemPriceDetail.ItemPriceDetail import Ui_DialogItemPriceDetail
-from MstItem.ItemComponentDetail.ItemComponentDetail import Ui_DialogItemComponentDetail
-from MstItem.ItemPackageDetail.ItemPackageDetail import Ui_DialogItemPackageDetail
-from MstItem.ItemAddOnDetail.ItemAddOnDetail import Ui_DialogItemAddOnDetail
-from MstItem.ItemModifierDetail.ItemModifierDetail import Ui_DialogItemModifierDetail
-from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceList import Ui_POSTouchQuickService
-from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceDetail import Ui_POSTouchQuickServiceDetail
-from TrnPOS.TrnPOSTouch.POSTouchSalesList import Ui_POSTouchSalesList
-from TrnPOS.TrnPOSTouch.POSTouchSalesDetail import Ui_POSTouchSalesDetail
-from MstCustomer.CustomerList import Ui_CustomerList
-from MstCustomer.CustomerDetail import Ui_CustomerDetail
-from MstDiscount.DiscountList import Ui_DiscountList
-from MstDiscount.DiscountDetail import Ui_DiscountDetail
-from MstDiscount.DiscountSearchItemDetail import Ui_DiscountSearchItemDetail
-from TrnPOS.TrnPOSRetail.POSBarcode import Ui_POSBarcode
-from TrnPOS.TrnPOSRetail.POSBarcodeDetail import Ui_POSBarcodeDetail
-from TrnPOS.TrnPOSRetail.POSBarcodeTender import Ui_POSBarcodeTender
-from MstUser.UserList import Ui_UserList
-from MstUser.UserDetail import Ui_UserDetail
-from SysTables.Tables import Ui_SYSTables
-from SysTables.AccountDetail.AccountDetail import UI_AccountDetail
-from SysTables.BankDetail.BankDetail import UI_BankDetail
-from SysTables.CardTypeDetail.CardTypeDetail import UI_CardTypeDetail
-from SysTables.FormDetail.FormDetail import UI_FormDetail
-from SysTables.ItemCategoryDetail.ItemCategoryDetail import UI_ItemCategoryDetail
-from SysTables.PayTypeDetail.PayTypeDetail import UI_PayTypeDetail
-from SysTables.PeriodDetail.PeriodDetail import UI_PeriodDetail
-from SysTables.SupplierDetail.SupplierDetail import UI_SupplierDetail
-from SysTables.TaxDetail.TaxDetail import UI_TaxDetail
-from SysTables.TerminalDetail.TerminalDetail import UI_TerminalDetail
-from SysTables.UnitDetail.UnitDetail import UI_UnitDetail
-from SysLogin.Login import UI_Login
-from TrnPOS.TrnPOSSalesGlobalComponent.POSSearchCurrency import UI_POSSearchCurrency
-from TrnPOS.TrnPOSSalesGlobalComponent.POSSalesItemDetail import UI_POSSalesItemDetail
-from TrnPOS.TrnPOSSalesGlobalComponent.POSSalesCustomerDetail import UI_POSSalesCustomerDetail
-from TrnPOS.TrnPOSSalesGlobalComponent.POSReturnRefund import UI_POSReturnRefund
-from TrnPOS.TrnPOSSalesGlobalComponent.POSDiscount import UI_POSDiscount
-from TrnPOS.TrnPOSSalesGlobalComponent.POSDeliveryCustomerInformation import UI_POSDeliveryCustomerInformation
-
+from imports import *
 
 file_path = 'POS-type.ini'
 # Usage
@@ -133,10 +83,17 @@ class EmbeddedItemList(QWidget):
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonAdd.clicked.connect(self.open_item_detail)
 
+        # Connect the textChanged signal of the search input to the search_data function
+        # self.ui.textEditItemFilter.textChanged.connect(self.search_data)        
         # Call the load_table_headers method on the menu_instance
         menu_instance.load_table_headers(self.ui.tableWidget)      
-                
-          
+        # Populate the comboBoxIsInventoryFilter with options
+        self.ui.comboBoxIsInventoryFilter.addItems(["All", "Inventory", "Non-Inventory"])
+        # Connect the currentIndexChanged signal to update the data                        
+        # Populate the comboBoxIsLockedFilter with options
+        self.ui.comboBoxIsLockedFilter.addItems(["All", "Locked", "Unlocked"])
+        # Connect the currentIndexChanged signal to update the data
+                  
     def close_tab(self):
         # index = self.main_window.tab_widget.indexOf(self)
         index = self.tab_widget.indexOf(self)
@@ -771,49 +728,28 @@ class Menu(QMainWindow):
 
     def load_table_headers(self, table_widget, increment_page=0):
         # total_count = 0  # Calculate total count from your data source
-
         self.current_offset = (self.current_page - 1) * self.items_per_page
         table_name = "MstItem"
-        # Column Names:
-        # 0. Id, 1. ItemCode, 2. BarCode, 3. ItemDescription, 4. Alias, 5. GenericName, 6. Category, 
-        # 7. SalesAccountId, 8. AssetAccountId, 9. CostAccountId, 10. InTaxId, 11. OutTaxId, 
-        # 12. UnitId, 13. DefaultSupplierId, 14. Cost, 15. MarkUp, 16. Price, 17. ImagePath, 
-        # 18. ReorderQuantity, 19. OnhandQuantity, 20. IsInventory, 21. ExpiryDate, 22. LotNumber, 
-        # 23. Remarks, 24. EntryUserId, 25. EntryDateTime, 26. UpdateUserId, 27. UpdateDateTime, 
-        # 28. IsLocked, 29. DefaultKitchenReport, 30. IsPackage, 31. cValue, 32. ChildItemId, 
-        # 33. IsMonitored, 34. IsStickerPrinted
         desired_indices = [1, 2, 3, 13, 6, 14, 16, 19, 20, 28]
-        indices_param = "&".join([f"column_indices={i}" for i in desired_indices])
-        response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
-        total_count = response.json().get("total_count", 0)
-        
+        # indices_param = "&".join([f"column_indices={i}" for i in desired_indices])
+        # response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
+        # indices_param = "column_indices=" + ",".join(map(str, desired_indices))
+        # response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
+        indices_param = f"column_indices={','.join(map(str, desired_indices))}"
+        response = requests.get(f"http://localhost:8000/table-data3/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")        
+        total_count = response.json().get("total_count", 0)        
         if response.status_code == 200:
             # For debugging purposes:
             # print(response.json())
             headers = response.json().get("headers", [])
             data = response.json().get("data", [])
             headers = headers
-            # headers = ["", ""] + headers
-            # self.table_widget.setColumnCount(len(headers))
             table_widget.setColumnCount(len(headers))
             table_widget.setHorizontalHeaderLabels(headers)
-            # table_widget.setRowCount(len(data))
-            # total_count = response.json().get("total_count", 0)
-            # for row_index, row_data in enumerate(data):
-            #     for col_index, cell_data in enumerate(row_data):
-            #         if col_index in [20, 28]:  # For indices 20 and 28, add a checkbox
-            #             checkbox_item = QTableWidgetItem()
-            #             checkbox_item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            #             checkbox_item.setCheckState(Qt.Unchecked)  # Set the default state to unchecked
-            #             table_widget.setItem(row_index, col_index, checkbox_item)
-            #         else:
-            #             table_widget.setItem(row_index, col_index, QTableWidgetItem(str(cell_data)))
             max_rows = 15  # Maximum rows to display
             displayed_rows = min(len(data), max_rows)  # The number of rows to actually display, which is the lesser of the length of data or 18
-
             table_widget.setRowCount(displayed_rows)  # Set the table row count to displayed_rows
             total_count = response.json().get("total_count", 0)
-
             for row_index, row_data in enumerate(data[:displayed_rows]):  # Loop only through the first displayed_rows of data
                 for col_index, cell_data in enumerate(row_data):
                     if col_index in [20, 28]:  # For indices 20 and 28, add a checkbox
@@ -822,29 +758,20 @@ class Menu(QMainWindow):
                         checkbox_item.setCheckState(Qt.Unchecked)  # Set the default state to unchecked
                         table_widget.setItem(row_index, col_index, checkbox_item)
                     else:
-                        # table_widget.setItem(row_index, col_index, QTableWidgetItem(str(cell_data)))
                         table_item = QTableWidgetItem(str(cell_data))
-
                         # Center align if the data is integer or boolean
                         if isinstance(cell_data, (int, bool, float)):
-                            table_item.setTextAlignment(Qt.AlignCenter)
-                            
+                            table_item.setTextAlignment(Qt.AlignCenter)                            
                         if col_index not in [20, 28]:
-                            table_widget.setItem(row_index, col_index, table_item)
-                                                
+                            table_widget.setItem(row_index, col_index, table_item)                                                
             additional_space = 20  # Number of pixels to add, adjust as needed
-
             table_widget.resizeColumnsToContents()  # Auto-resize columns based on content
-
             for col in range(table_widget.columnCount()):
                 current_width = table_widget.columnWidth(col)
-                table_widget.setColumnWidth(col, current_width + additional_space)
-        
+                table_widget.setColumnWidth(col, current_width + additional_space)        
         else:
             error_msg = f"Error getting data for table {table_name}: {response.text}"
             print(error_msg)
-            # self.show_error_message(error_msg)
-
         # Update the total_count attribute
         self.total_count = total_count            
         gc.collect()  # <-- Add it here after loading and processing data
@@ -896,8 +823,12 @@ class Menu(QMainWindow):
             elif button_value == "System Tables":
                 sub_tab_widget = QTabWidget()  # This is just an example. You should create or reference the actual sub-tab widget here.
                 systemTablesInstance = EmbeddedSYSTables(self, sub_tab_widget)
+                # Add the EmbeddedSYSTables instance as a tab within sub_tab_widget.
+                # You can specify the tab title as "System - System Tables" or customize it as needed.
+                sub_tab_widget.addTab(systemTablesInstance, "System - System Tables")
+                
                 add_or_select_tab(self.tab_widget, systemTablesInstance, "System - System Tables")
-          
+        
                                                                                                                         
     def load_first_page(self, table_widget):
         self.current_page = 1
