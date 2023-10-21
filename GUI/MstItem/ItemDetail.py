@@ -961,3 +961,12 @@ class Ui_ItemDetail(object):
         item.setText(_translate("Form", "Item Description"))
         self.pushButtonAddItemModifier.setText(_translate("Form", "Add"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabItemModifierList), _translate("Form", "Item Modifier List"))
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_ItemDetail()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())

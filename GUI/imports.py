@@ -1,0 +1,51 @@
+import sys, requests, gc, os
+import configparser
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QPushButton, QDialog
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QSizePolicy, QTabWidget, QLineEdit, QFrame, QProgressDialog
+from PyQt5.QtWidgets import QHBoxLayout, QTableWidget, QTableWidgetItem, QComboBox, QHeaderView, QDesktopWidget
+from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtCore import Qt, QTimer
+from functools import partial
+from MstItem.ItemDetail import Ui_ItemDetail
+from MstItem.ItemList import Ui_FormList
+from PyQt5.QtWidgets import QMessageBox
+from MstItem.ItemPriceDetail.ItemPriceDetail import Ui_DialogItemPriceDetail
+from MstItem.ItemComponentDetail.ItemComponentDetail import Ui_DialogItemComponentDetail
+from MstItem.ItemPackageDetail.ItemPackageDetail import Ui_DialogItemPackageDetail
+from MstItem.ItemAddOnDetail.ItemAddOnDetail import Ui_DialogItemAddOnDetail
+from MstItem.ItemModifierDetail.ItemModifierDetail import Ui_DialogItemModifierDetail
+from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceList import Ui_POSTouchQuickService
+from TrnPOS.TrnPOSTouchQuickService.POSTouchQuickServiceDetail import Ui_POSTouchQuickServiceDetail
+from TrnPOS.TrnPOSTouch.POSTouchSalesList import Ui_POSTouchSalesList
+from TrnPOS.TrnPOSTouch.POSTouchSalesDetail import Ui_POSTouchSalesDetail
+from MstCustomer.CustomerList import Ui_CustomerList
+from MstCustomer.CustomerDetail import Ui_CustomerDetail
+from MstDiscount.DiscountList import Ui_DiscountList
+from MstDiscount.DiscountDetail import Ui_DiscountDetail
+from MstDiscount.DiscountSearchItemDetail import Ui_DiscountSearchItemDetail
+from TrnPOS.TrnPOSRetail.POSBarcode import Ui_POSBarcode
+from TrnPOS.TrnPOSRetail.POSBarcodeDetail import Ui_POSBarcodeDetail
+from TrnPOS.TrnPOSRetail.POSBarcodeTender import Ui_POSBarcodeTender
+from MstUser.UserList import Ui_UserList
+from MstUser.UserDetail import Ui_UserDetail
+from SysTables.Tables import Ui_SYSTables
+from SysTables.AccountDetail.AccountDetail import UI_AccountDetail
+from SysTables.BankDetail.BankDetail import UI_BankDetail
+from SysTables.CardTypeDetail.CardTypeDetail import UI_CardTypeDetail
+from SysTables.FormDetail.FormDetail import UI_FormDetail
+from SysTables.ItemCategoryDetail.ItemCategoryDetail import UI_ItemCategoryDetail
+from SysTables.PayTypeDetail.PayTypeDetail import UI_PayTypeDetail
+from SysTables.PeriodDetail.PeriodDetail import UI_PeriodDetail
+from SysTables.SupplierDetail.SupplierDetail import UI_SupplierDetail
+from SysTables.TaxDetail.TaxDetail import UI_TaxDetail
+from SysTables.TerminalDetail.TerminalDetail import UI_TerminalDetail
+from SysTables.UnitDetail.UnitDetail import UI_UnitDetail
+from SysLogin.Login import UI_Login
+from TrnPOS.TrnPOSSalesGlobalComponent.POSSearchCurrency import UI_POSSearchCurrency
+from TrnPOS.TrnPOSSalesGlobalComponent.POSSalesItemDetail import UI_POSSalesItemDetail
+from TrnPOS.TrnPOSSalesGlobalComponent.POSSalesCustomerDetail import UI_POSSalesCustomerDetail
+from TrnPOS.TrnPOSSalesGlobalComponent.POSReturnRefund import UI_POSReturnRefund
+from TrnPOS.TrnPOSSalesGlobalComponent.POSDiscount import UI_POSDiscount
+from TrnPOS.TrnPOSSalesGlobalComponent.POSDeliveryCustomerInformation import UI_POSDeliveryCustomerInformation
+

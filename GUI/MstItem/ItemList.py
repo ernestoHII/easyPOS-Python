@@ -1,10 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_FormList(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1366, 768)
+        Form.resize(1300, 500)
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1366, 60))
         self.frame.setAutoFillBackground(False)
@@ -199,3 +198,12 @@ class Ui_FormList(object):
         self.pushButtonPrevious.setText(_translate("Form", "Previous"))
         self.pushButtonNext.setText(_translate("Form", "Next"))
         self.pushButtonLast.setText(_translate("Form", "Last"))
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_FormList()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())

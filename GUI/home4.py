@@ -82,11 +82,12 @@ class EmbeddedItemList(QWidget):
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonAdd.clicked.connect(self.open_item_detail)
-
+        
         # Connect the textChanged signal of the search input to the search_data function
         # self.ui.textEditItemFilter.textChanged.connect(self.search_data)        
         # Call the load_table_headers method on the menu_instance
         menu_instance.load_table_headers(self.ui.tableWidget)      
+        # menu_instance.update_data(self.ui.tableWidget)  # <-- This line calls the method from Menu class
         # Populate the comboBoxIsInventoryFilter with options
         self.ui.comboBoxIsInventoryFilter.addItems(["All", "Inventory", "Non-Inventory"])
         # Connect the currentIndexChanged signal to update the data                        
@@ -726,17 +727,84 @@ class Menu(QMainWindow):
         # Add the grid layout to the central layout
         central_layout.addLayout(grid_layout)
 
+    def create_tab(self, button_value):
+        
+        if self.tab_widget is not None:
+            for index in range(self.tab_widget.count()):
+                if self.tab_widget.tabText(index) == button_value:
+                    self.tab_widget.setCurrentIndex(index)
+                    return
+            if button_value == "Setup - Item List":
+                listTab = EmbeddedItemList(self, self.tab_widget, self)                    
+                add_or_select_tab(self.tab_widget, listTab, "Setup - Item List")
+            elif button_value == "POS - F2":
+                pos_type_value = read_pos_type_from_ini(file_path)
+                print(pos_type_value)
+                if pos_type_value == 3:
+                    posTab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
+                    add_or_select_tab(self.tab_widget, posTab, "Activity - POS Touch Quick Service")
+                elif pos_type_value == 2:
+                    PTSLTab = EmbeddedPOSTouchSalesList(self, self.tab_widget)
+                    add_or_select_tab(self.tab_widget, PTSLTab, "Activity - POS Touch")           
+                elif pos_type_value == 1:
+                    barcodeTab = EmbeddedPOSBarcode(self, self.tab_widget)
+                    add_or_select_tab(self.tab_widget, barcodeTab, "Activity - POS Barcode")                        
+            elif button_value == "Customer":
+                customerTab = EmbeddedCustomerListCombinedApp(self, self.tab_widget)
+                add_or_select_tab(self.tab_widget, customerTab, "Setup - Customer")                                
+            elif button_value == "Discounting":
+                discountTab = EmbeddedDiscountList(self, self.tab_widget)
+                add_or_select_tab(self.tab_widget, discountTab, "Setup - Discounting List")                                    
+            elif button_value == "User":
+                userTab = EmbeddedUserList(self, self.tab_widget)
+                add_or_select_tab(self.tab_widget, userTab, "Setup - User List")    
+            elif button_value == "System Tables":
+                sub_tab_widget = QTabWidget()  # This is just an example. You should create or reference the actual sub-tab widget here.
+                systemTablesInstance = EmbeddedSYSTables(self, sub_tab_widget)
+                # Add the EmbeddedSYSTables instance as a tab within sub_tab_widget.
+                # You can specify the tab title as "System - System Tables" or customize it as needed.
+                sub_tab_widget.addTab(systemTablesInstance, "System - System Tables")
+                
+                add_or_select_tab(self.tab_widget, systemTablesInstance, "System - System Tables")
+                
+    def load_next_page(self, table_widget):
+        # Check if there are more pages to load
+        total_pages = max(1, -(-self.total_count // self.items_per_page))
+        if self.current_page < total_pages:
+            self.current_page += 1
+            self.load_table_headers(table_widget)
+
+    def load_prev_page(self, table_widget):
+        if self.current_page > 1:  # Avoid going into negative or zero pages
+            self.current_page -= 1  # decrement the current page here
+            self.load_table_headers(table_widget)
+                                                                                                                              
+    def load_first_page(self, table_widget):
+        self.current_page = 1
+        self.load_table_headers(table_widget)
+
+    def load_last_page(self, table_widget):
+        self.current_page = -(-self.total_count // self.items_per_page)  # Calculate total pages dynamically
+        self.load_table_headers(table_widget)
+
+    def close_current_tab(self):
+        print("Loaded4")            
+        # Get the index of the current tab
+        current_index = self.tab_widget.currentIndex()
+        
+        # Remove the current tab
+        self.tab_widget.removeTab(current_index)
+
+    def show_error_message(self, msg):
+        QMessageBox.critical(self, "Error", msg)
+
     def load_table_headers(self, table_widget, increment_page=0):
         # total_count = 0  # Calculate total count from your data source
         self.current_offset = (self.current_page - 1) * self.items_per_page
         table_name = "MstItem"
         desired_indices = [1, 2, 3, 13, 6, 14, 16, 19, 20, 28]
-        # indices_param = "&".join([f"column_indices={i}" for i in desired_indices])
-        # response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
-        # indices_param = "column_indices=" + ",".join(map(str, desired_indices))
-        # response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
-        indices_param = f"column_indices={','.join(map(str, desired_indices))}"
-        response = requests.get(f"http://localhost:8000/table-data3/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")        
+        indices_param = "&".join([f"column_indices={i}" for i in desired_indices])
+        response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
         total_count = response.json().get("total_count", 0)        
         if response.status_code == 200:
             # For debugging purposes:
@@ -775,78 +843,6 @@ class Menu(QMainWindow):
         # Update the total_count attribute
         self.total_count = total_count            
         gc.collect()  # <-- Add it here after loading and processing data
-
-    def load_next_page(self, table_widget):
-        # Check if there are more pages to load
-        total_pages = max(1, -(-self.total_count // self.items_per_page))
-        if self.current_page < total_pages:
-            self.current_page += 1
-            self.load_table_headers(table_widget)
-
-    def load_prev_page(self, table_widget):
-        if self.current_page > 1:  # Avoid going into negative or zero pages
-            self.current_page -= 1  # decrement the current page here
-            self.load_table_headers(table_widget)
-      
-    def create_tab(self, button_value):
-        if self.tab_widget is not None:
-            for index in range(self.tab_widget.count()):
-                if self.tab_widget.tabText(index) == button_value:
-                    self.tab_widget.setCurrentIndex(index)
-                    return
-
-            if button_value == "Setup - Item List":
-                # listTab = EmbeddedItemList(self, self.tab_widget)
-                listTab = EmbeddedItemList(self, self.tab_widget, self)
-                add_or_select_tab(self.tab_widget, listTab, "Setup - Item List")
-            elif button_value == "POS - F2":
-                pos_type_value = read_pos_type_from_ini(file_path)
-                print(pos_type_value)
-                if pos_type_value == 3:
-                    posTab = EmbeddedPOSTouchQuickServiceList(self, self.tab_widget)
-                    add_or_select_tab(self.tab_widget, posTab, "Activity - POS Touch Quick Service")
-                elif pos_type_value == 2:
-                    PTSLTab = EmbeddedPOSTouchSalesList(self, self.tab_widget)
-                    add_or_select_tab(self.tab_widget, PTSLTab, "Activity - POS Touch")           
-                elif pos_type_value == 1:
-                    barcodeTab = EmbeddedPOSBarcode(self, self.tab_widget)
-                    add_or_select_tab(self.tab_widget, barcodeTab, "Activity - POS Barcode")                        
-            elif button_value == "Customer":
-                customerTab = EmbeddedCustomerListCombinedApp(self, self.tab_widget)
-                add_or_select_tab(self.tab_widget, customerTab, "Setup - Customer")                                
-            elif button_value == "Discounting":
-                discountTab = EmbeddedDiscountList(self, self.tab_widget)
-                add_or_select_tab(self.tab_widget, discountTab, "Setup - Discounting List")                                    
-            elif button_value == "User":
-                userTab = EmbeddedUserList(self, self.tab_widget)
-                add_or_select_tab(self.tab_widget, userTab, "Setup - User List")    
-            elif button_value == "System Tables":
-                sub_tab_widget = QTabWidget()  # This is just an example. You should create or reference the actual sub-tab widget here.
-                systemTablesInstance = EmbeddedSYSTables(self, sub_tab_widget)
-                # Add the EmbeddedSYSTables instance as a tab within sub_tab_widget.
-                # You can specify the tab title as "System - System Tables" or customize it as needed.
-                sub_tab_widget.addTab(systemTablesInstance, "System - System Tables")
-                
-                add_or_select_tab(self.tab_widget, systemTablesInstance, "System - System Tables")
-        
-                                                                                                                        
-    def load_first_page(self, table_widget):
-        self.current_page = 1
-        self.load_table_headers(table_widget)
-
-    def load_last_page(self, table_widget):
-        self.current_page = -(-self.total_count // self.items_per_page)  # Calculate total pages dynamically
-        self.load_table_headers(table_widget)
-
-    def close_current_tab(self):
-        # Get the index of the current tab
-        current_index = self.tab_widget.currentIndex()
-        
-        # Remove the current tab
-        self.tab_widget.removeTab(current_index)
-
-    def show_error_message(self, msg):
-        QMessageBox.critical(self, "Error", msg)
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -889,10 +885,28 @@ def read_pos_type_from_ini(file_path):
 
     return None
 
+class BackendCommunication:
+    BASE_URL = "http://localhost:8000"  # Replace with your backend URL
 
+    @staticmethod
+    def load_data(page, custom_offset, is_locked_filter, is_inventory_filter):
+        url = f"{BackendCommunication.BASE_URL}/load_data"
+        params = {
+            "page": page,
+            "custom_offset": custom_offset,
+            "is_locked_filter": is_locked_filter,
+            "is_inventory_filter": is_inventory_filter
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyWindow()
     window.show()
     sys.exit(app.exec_())
+
 
