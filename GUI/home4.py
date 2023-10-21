@@ -798,51 +798,48 @@ class Menu(QMainWindow):
     def show_error_message(self, msg):
         QMessageBox.critical(self, "Error", msg)
 
-    def load_table_headers(self, table_widget, increment_page=0):
-        # total_count = 0  # Calculate total count from your data source
-        self.current_offset = (self.current_page - 1) * self.items_per_page
-        table_name = "MstItem"
-        desired_indices = [1, 2, 3, 13, 6, 14, 16, 19, 20, 28]
-        indices_param = "&".join([f"column_indices={i}" for i in desired_indices])
-        response = requests.get(f"http://localhost:8000/table-data/{table_name}?{indices_param}&skip={self.current_offset}&limit={self.items_per_page}")
-        total_count = response.json().get("total_count", 0)        
+    def load_table_headers(self, table_widget):
+        # Define the endpoint URL
+        url = "http://127.0.0.1:8000/items/"
+
+        response = requests.get(url)
+
+        # Ensure the request was successful
         if response.status_code == 200:
-            # For debugging purposes:
-            # print(response.json())
-            headers = response.json().get("headers", [])
-            data = response.json().get("data", [])
-            headers = headers
-            table_widget.setColumnCount(len(headers))
-            table_widget.setHorizontalHeaderLabels(headers)
-            max_rows = 15  # Maximum rows to display
-            displayed_rows = min(len(data), max_rows)  # The number of rows to actually display, which is the lesser of the length of data or 18
-            table_widget.setRowCount(displayed_rows)  # Set the table row count to displayed_rows
-            total_count = response.json().get("total_count", 0)
-            for row_index, row_data in enumerate(data[:displayed_rows]):  # Loop only through the first displayed_rows of data
-                for col_index, cell_data in enumerate(row_data):
-                    if col_index in [20, 28]:  # For indices 20 and 28, add a checkbox
-                        checkbox_item = QTableWidgetItem()
-                        checkbox_item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                        checkbox_item.setCheckState(Qt.Unchecked)  # Set the default state to unchecked
-                        table_widget.setItem(row_index, col_index, checkbox_item)
-                    else:
-                        table_item = QTableWidgetItem(str(cell_data))
-                        # Center align if the data is integer or boolean
-                        if isinstance(cell_data, (int, bool, float)):
-                            table_item.setTextAlignment(Qt.AlignCenter)                            
-                        if col_index not in [20, 28]:
-                            table_widget.setItem(row_index, col_index, table_item)                                                
-            additional_space = 20  # Number of pixels to add, adjust as needed
-            table_widget.resizeColumnsToContents()  # Auto-resize columns based on content
-            for col in range(table_widget.columnCount()):
-                current_width = table_widget.columnWidth(col)
-                table_widget.setColumnWidth(col, current_width + additional_space)        
+            data = response.json()
+            print(data)  # Print the fetched data
+            items_list = data.get("items", [])
+
+            if items_list:
+                headers = list(items_list[0].keys())
+                table_widget.setHorizontalHeaderLabels(headers)
+
+                # Set the number of rows and columns
+                table_widget.setRowCount(len(items_list))
+                table_widget.setColumnCount(len(headers))
+                
+                # Populate the table with data
+                for row_num, item in enumerate(items_list):
+                    for col_num, key in enumerate(headers):
+                        cell_value = item[key]
+                        table_widget.setItem(row_num, col_num, QTableWidgetItem(str(cell_value)))
+
+                # Set each column width to fit the longest values from each row
+                for col_num in range(len(headers)):
+                    max_width = max(table_widget.columnWidth(col_num), table_widget.sizeHintForColumn(col_num))
+                    table_widget.setColumnWidth(col_num, max_width)
+                    
+            else:
+                # No items found
+                table_widget.setRowCount(0)
+                table_widget.setColumnCount(0)
+                
         else:
-            error_msg = f"Error getting data for table {table_name}: {response.text}"
-            print(error_msg)
-        # Update the total_count attribute
-        self.total_count = total_count            
-        gc.collect()  # <-- Add it here after loading and processing data
+            # Handle errors, perhaps log them or show an error message
+            print(f"Error fetching items: {response.status_code} - {response.text}")
+
+        gc.collect()  # <-- Added for cleaning up after loading and processing data
+
 
 class MyWindow(QMainWindow):
     def __init__(self):
