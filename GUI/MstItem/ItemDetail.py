@@ -448,7 +448,8 @@ class Ui_ItemDetail(object):
         item = QtWidgets.QTableWidgetItem()
         self.tableWidgetItemPrice.setHorizontalHeaderItem(4, item)
         self.pushButtonAddItemPrice = QtWidgets.QPushButton(self.frame_21)
-        self.pushButtonAddItemPrice.setGeometry(QtCore.QRect(1280, 5, 70, 40))
+        # Adjust the position and size of pushButtonAddItemPrice        
+        self.pushButtonAddItemPrice.setGeometry(QtCore.QRect(1260, 5, 70, 40))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(10)

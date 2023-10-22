@@ -24,48 +24,249 @@ class EmbeddedItemDetail(QWidget):
         self.ui = Ui_ItemDetail()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
-        self.ui.pushButtonClose.clicked.connect(self.close_tab)
+        self.setup_ui_elements()
+    def setup_ui_elements(self):
+        # Tab Item Add Buttons            
         self.ui.pushButtonAddItemPrice.clicked.connect(self.open_ItemPriceDetail)
         self.ui.pushButtonAddItemComponent.clicked.connect(self.open_ItemComponentDetail)
         self.ui.pushButtonAddItemPackage.clicked.connect(self.open_Ui_DialogItemPackageDetail)
         self.ui.pushButtonAddItemAddOns.clicked.connect(self.open_Ui_DialogItemAddOnDetail)
         self.ui.pushButtonAddItemModifier.clicked.connect(self.open_Ui_DialogItemModifierDetail)
+        # UI Elements
+        self.ui.pushButtonUploadImage.clicked.connect(self.open_file_dialog) #1
+        self.ui.textEditItemCode.setEnabled(False) #2
+        self.ui.textEditBarcode.setText("N/A") #3
+        self.ui.textEditItemDescription.setText("N/A") #4
+        self.ui.textEditAlias.setText("N/A") #5
+        self.ui.textEditGenericName.setText("N/A") #6
+        self.ui.textEditRemarks.setText("N/A") #7
+        self.ui.textEditLotNo.setText("N/A") #8
+        self.ui.textEditCost.setText("{:.2f}".format(0.00)) #9
+        self.ui.textEditMarkUp.setText("{:.2f}".format(0.00)) #10
+        self.ui.textEditPrice.setText("{:.2f}".format(0.00)) #11 
+        self.ui.textEditStockLevelQty.setText("{:.2f}".format(0.00)) #12
+        self.ui.textEditOnHandQty.setText("{:.2f}".format(0.00)) #13        
+        self.ui.textEditConversionValue.setText("{:.2f}".format(0.00)) #14
+        current_date = QDate.currentDate() #15
+        self.ui.dateEditExpiryDate.setDate(current_date) #16
+        self.ui.dateEditExpiryDate.setCalendarPopup(True) #17
+        self.ui.checkBoxIsInventory.setChecked(True) #18
+        self.fetch_last_item_code() #19
+        self.populate_combo_box_child_item() #20    
+        self.populate_combo_box_category() #21
+        self.populate_combo_box_unit() #22
+        self.populate_combo_box_supplier() #23
+        self.populate_combo_box_vat() #24
+        self.textEditImageFilePath = self.ui.textEditImageFilePath #25
+        # Change Fontsize of ComboBox
+        combo_box_supplier = self.ui.comboBoxSupplier
+        combo_box_supplier.setStyleSheet("font-size: 14px;")
+        combo_box_vat = self.ui.comboBoxVAT
+        combo_box_vat.setStyleSheet("font-size: 14px;")
+        combo_box_unit = self.ui.comboBoxUnit
+        combo_box_unit.setStyleSheet("font-size: 14px;")
+        combo_box_Category = self.ui.comboBoxCategory
+        combo_box_Category.setStyleSheet("font-size: 14px;")
+        combo_box_ChildItem = self.ui.comboBoxChildItem
+        combo_box_ChildItem.setStyleSheet("font-size: 14px;")
+        
+        self.ui.pushButtonLock.clicked.connect(self.submit_data)
+        self.ui.pushButtonUnlock.clicked.connect(self.submit_data)
+        self.ui.pushButtonClose.clicked.connect(self.close_tab)         
+    def submit_data(self):
+        item_description = self.input_item_description.text()
+        alias = self.input_alias.text()
+        generic_name = self.input_generic_name.text()
+        category = self.input_category.text()
+        # Extract data from other input fields here
+        data = {
+            "data": {
+                "ItemDescription": item_description,
+                "Alias": alias,
+                "GenericName": generic_name,
+                "Category": category,
+                # Add more fields here based on your database schema
+            }
+        }
+        api_url = "http://localhost:8000/items/"  # Replace with your API URL
+        headers = {"Content-Type": "application/json"}
+        try:
+            response = requests.post(api_url, data=json.dumps(data), headers=headers)
 
+            if response.status_code == 200:
+                print("Data submitted successfully.")
+            else:
+                print(f"Error: {response.status_code} - {response.text}")
+        except Exception as e:
+            print(f"Error: {str(e)}")            
+    def populate_combo_box_supplier(self):
+        # Define the API endpoint URL
+        api_url = "http://localhost:8000/suppliers/"  # Update with your FastAPI server URL    
+        try:
+            # Make a GET request to the API endpoint
+            response = requests.get(api_url)        
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                data = response.json()
+                supplier_names = data.get("suppliers", [])            
+                # Assuming self.ui_form.comboBoxSupplier is your combo box widget
+                # Clear the existing items in the combo box
+                self.ui.comboBoxSupplier.clear()            
+                # Populate the combo box with the fetched data
+                for supplier in supplier_names:
+                    self.ui.comboBoxSupplier.addItem(supplier)
+            else:
+                # Handle errors if the API request fails
+                print(f"API request failed with status code {response.status_code}: {response.text}")
+        except Exception as e:
+            # Handle exceptions, e.g., network issues or invalid response
+            print(f"Error: {str(e)}")                        
+    def populate_combo_box_vat(self):
+        # Define the API endpoint URL
+        api_url = "http://localhost:8000/vat/"
+        try:
+            # Make a GET request to the API endpoint
+            response = requests.get(api_url)
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                data = response.json()
+                item_aliases = data.get("vat", [])
+                # Assuming self.ui.comboBoxVAT is your combo box widget
+                # Clear the existing items in the combo box
+                self.ui.comboBoxVAT.clear()
+                for alias in item_aliases:
+                    self.ui.comboBoxVAT.addItem(alias)
+            else:
+                # Handle errors if the API request fails
+                print(f"API request failed with status code {response.status_code}: {response.text}")
+        except Exception as e:
+            # Handle exceptions, e.g., network issues or invalid response
+            print(f"Error: {str(e)}")
+    def populate_combo_box_unit(self):
+        # Define the API endpoint URL
+        api_url = "http://localhost:8000/units/"
+        try:
+            # Make a GET request to the API endpoint
+            response = requests.get(api_url)
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                data = response.json()
+                item_aliases = data.get("units", [])
+                # Assuming self.ui.comboBoxChildItem is your combo box widget
+                # Clear the existing items in the combo box
+                self.ui.comboBoxUnit.clear()
+                # Populate the combo box with the fetched data
+                for alias in item_aliases:
+                    self.ui.comboBoxUnit.addItem(alias)
+            else:
+                # Handle errors if the API request fails
+                print(f"API request failed with status code {response.status_code}: {response.text}")
+        except Exception as e:
+            # Handle exceptions, e.g., network issues or invalid response
+            print(f"Error: {str(e)}")       
+    def populate_combo_box_category(self):
+        # Define the API endpoint URL
+        api_url = "http://localhost:8000/categories/"
+        try:
+            # Make a GET request to the API endpoint
+            response = requests.get(api_url)
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                data = response.json()
+                item_aliases = data.get("categories", [])
+                # Assuming self.ui.comboBoxChildItem is your combo box widget
+                # Clear the existing items in the combo box
+                self.ui.comboBoxCategory.clear()
+                # Populate the combo box with the fetched data
+                for alias in item_aliases:
+                    self.ui.comboBoxCategory.addItem(alias)
+            else:
+                # Handle errors if the API request fails
+                print(f"API request failed with status code {response.status_code}: {response.text}")
+        except Exception as e:
+            # Handle exceptions, e.g., network issues or invalid response
+            print(f"Error: {str(e)}")        
+    def populate_combo_box_child_item(self):
+        # Define the API endpoint URL
+        api_url = "http://localhost:8000/populate_combo_box_child_item/"
+        try:
+            # Make a GET request to the API endpoint
+            response = requests.get(api_url)
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                data = response.json()
+                item_aliases = data.get("items", [])
+                # Assuming self.ui.comboBoxChildItem is your combo box widget
+                # Clear the existing items in the combo box
+                self.ui.comboBoxChildItem.clear()
+                # Populate the combo box with the fetched data
+                for alias in item_aliases:
+                    self.ui.comboBoxChildItem.addItem(alias)
+            else:
+                # Handle errors if the API request fails
+                print(f"API request failed with status code {response.status_code}: {response.text}")
+        except Exception as e:
+            # Handle exceptions, e.g., network issues or invalid response
+            print(f"Error: {str(e)}")                    
+    def open_file_dialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly  # Optional: Allow read-only access
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open Image File", "", "Image Files (*.png *.jpg *.bmp);;All Files (*)", options=options)
+
+        if file_name:
+            # Set the selected file's path in the QLineEdit
+            self.ui.textEditImageFilePath.setText(file_name)  # Use self.textEditImageFilePath            
+    def fetch_last_item_code(self):
+        try:
+            # Define the API endpoint to fetch the last ItemCode
+            api_url = "http://localhost:8000/display_item_code/"
+
+            # Make a GET request to the API
+            response = requests.get(api_url)
+
+            if response.status_code == 200:
+                # If the request is successful, extract the ItemCode from the response JSON
+                data = response.json()
+                last_item_code = data.get("ItemCode", "")
+                
+                # Display the last_item_code in textEditItemCode
+                self.ui.textEditItemCode.setPlainText(str(last_item_code))
+            else:
+                # Handle errors, such as displaying an error message
+                print(f"Error fetching last ItemCode: {response.status_code} - {response.text}")
+
+        except Exception as e:
+            print(f"Error: {str(e)}")        
     def open_ItemPriceDetail(self):
         self.dialog = QDialog(self)
         self.ui_dialog = Ui_DialogItemPriceDetail()
         self.ui_dialog.setupUi(self.dialog)
         self.ui_dialog.pushButton_7.clicked.connect(self.dialog.close)
-        self.dialog.show()
-    
+        self.dialog.show()    
     def open_ItemComponentDetail(self):
         self.dialog = QDialog(self)
         self.ui_ItemComponentDetail = Ui_DialogItemComponentDetail()
         self.ui_ItemComponentDetail.setupUi(self.dialog)        
         self.ui_ItemComponentDetail.pushButton_7.clicked.connect(self.dialog.close)
         self.dialog.show()
-
     def open_Ui_DialogItemPackageDetail(self):    
         self.dialog = QDialog(self)                    
         self.ui_ItemPackageDetail = Ui_DialogItemPackageDetail()
         self.ui_ItemPackageDetail.setupUi(self.dialog)   
         self.ui_ItemPackageDetail.pushButton_7.clicked.connect(self.dialog.close)
         self.dialog.show()
-
     def open_Ui_DialogItemAddOnDetail(self):               
         self.dialog = QDialog(self)              
         self.ui_ItemAddOnDetail = Ui_DialogItemAddOnDetail()
         self.ui_ItemAddOnDetail.setupUi(self.dialog)  
         self.ui_ItemAddOnDetail.pushButton_7.clicked.connect(self.dialog.close)
-        self.dialog.show()
-        
+        self.dialog.show()        
     def open_Ui_DialogItemModifierDetail(self):        
         self.dialog = QDialog(self)        
         self.ui_ItemModifierDetail = Ui_DialogItemModifierDetail()
         self.ui_ItemModifierDetail.setupUi(self.dialog)                          
         self.ui_ItemModifierDetail.pushButton_7.clicked.connect(self.dialog.close)        
-        self.dialog.show()
-        
+        self.dialog.show()        
     def close_tab(self):
         index = self.tab_widget.indexOf(self)
         if index != -1:
@@ -82,11 +283,12 @@ class EmbeddedItemList(QWidget):
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
         self.ui.pushButtonAdd.clicked.connect(self.open_item_detail)
+        self.ui.pushButtonNext.setVisible(True)
         
         # Connect the textChanged signal of the search input to the search_data function
         # self.ui.textEditItemFilter.textChanged.connect(self.search_data)        
         # Call the load_table_headers method on the menu_instance
-        menu_instance.load_table_headers(self.ui.tableWidget)      
+        # menu_instance.load_table_headers(self.ui.tableWidget)      
         # menu_instance.update_data(self.ui.tableWidget)  # <-- This line calls the method from Menu class
         # Populate the comboBoxIsInventoryFilter with options
         self.ui.comboBoxIsInventoryFilter.addItems(["All", "Inventory", "Non-Inventory"])
@@ -800,7 +1002,7 @@ class Menu(QMainWindow):
 
     def load_table_headers(self, table_widget):
         # Define the endpoint URL
-        url = "http://127.0.0.1:8000/items/"
+        url = "http://localhost:8000/items/"
 
         response = requests.get(url)
 
