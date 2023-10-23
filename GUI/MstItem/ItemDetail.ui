@@ -66,7 +66,6 @@
      <font>
       <family>Segoe UI</family>
       <pointsize>15</pointsize>
-      <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
@@ -80,7 +79,7 @@
    <widget class="QPushButton" name="pushButtonClose">
     <property name="geometry">
      <rect>
-      <x>1280</x>
+      <x>1270</x>
       <y>10</y>
       <width>70</width>
       <height>40</height>
@@ -90,7 +89,6 @@
      <font>
       <family>Segoe UI</family>
       <pointsize>10</pointsize>
-      <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
@@ -108,7 +106,7 @@ color: rgb(255, 255, 255);</string>
    <widget class="QPushButton" name="pushButtonUnlock">
     <property name="geometry">
      <rect>
-      <x>1200</x>
+      <x>1190</x>
       <y>10</y>
       <width>70</width>
       <height>40</height>
@@ -118,7 +116,6 @@ color: rgb(255, 255, 255);</string>
      <font>
       <family>Segoe UI</family>
       <pointsize>10</pointsize>
-      <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
@@ -136,7 +133,7 @@ color: rgb(255, 255, 255);</string>
    <widget class="QPushButton" name="pushButtonLock">
     <property name="geometry">
      <rect>
-      <x>1120</x>
+      <x>1110</x>
       <y>10</y>
       <width>70</width>
       <height>40</height>
@@ -146,7 +143,6 @@ color: rgb(255, 255, 255);</string>
      <font>
       <family>Segoe UI</family>
       <pointsize>10</pointsize>
-      <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
@@ -190,7 +186,7 @@ color: rgb(255, 255, 255);</string>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabGeneralInformation">
      <attribute name="title">
@@ -1157,7 +1153,7 @@ color: rgb(0, 0, 0);</string>
       <widget class="QPushButton" name="pushButtonAddItemPrice">
        <property name="geometry">
         <rect>
-         <x>1280</x>
+         <x>1270</x>
          <y>5</y>
          <width>70</width>
          <height>40</height>
@@ -1167,7 +1163,6 @@ color: rgb(0, 0, 0);</string>
         <font>
          <family>Segoe UI</family>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1404,7 +1399,7 @@ color: rgb(255, 255, 255);</string>
       <widget class="QPushButton" name="pushButtonAddItemComponent">
        <property name="geometry">
         <rect>
-         <x>1280</x>
+         <x>1270</x>
          <y>5</y>
          <width>70</width>
          <height>40</height>
@@ -1414,7 +1409,6 @@ color: rgb(255, 255, 255);</string>
         <font>
          <family>Segoe UI</family>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1783,7 +1777,7 @@ color: rgb(255, 255, 255);</string>
       <widget class="QPushButton" name="pushButtonAddItemPackage">
        <property name="geometry">
         <rect>
-         <x>1280</x>
+         <x>1270</x>
          <y>5</y>
          <width>70</width>
          <height>40</height>
@@ -1793,7 +1787,6 @@ color: rgb(255, 255, 255);</string>
         <font>
          <family>Segoe UI</family>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1863,7 +1856,7 @@ color: rgb(255, 255, 255);</string>
       <widget class="QPushButton" name="pushButtonAddItemAddOns">
        <property name="geometry">
         <rect>
-         <x>1280</x>
+         <x>1270</x>
          <y>5</y>
          <width>70</width>
          <height>40</height>
@@ -1873,7 +1866,6 @@ color: rgb(255, 255, 255);</string>
         <font>
          <family>Segoe UI</family>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -2227,7 +2219,7 @@ color: rgb(255, 255, 255);</string>
       <widget class="QPushButton" name="pushButtonAddItemModifier">
        <property name="geometry">
         <rect>
-         <x>1280</x>
+         <x>1270</x>
          <y>5</y>
          <width>70</width>
          <height>40</height>
@@ -2237,7 +2229,6 @@ color: rgb(255, 255, 255);</string>
         <font>
          <family>Segoe UI</family>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>

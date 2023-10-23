@@ -21,7 +21,7 @@ class EmbeddedItemDetail(QWidget):
     def __init__(self, main_window, tab_widget):
         super().__init__()
         self.main_window = main_window
-        self.ui = Ui_ItemDetail()
+        self.ui = Ui_FormD()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.setup_ui_elements()
@@ -68,30 +68,56 @@ class EmbeddedItemDetail(QWidget):
         combo_box_Category = self.ui.comboBoxCategory
         combo_box_Category.setStyleSheet("font-size: 14px;")
         combo_box_ChildItem = self.ui.comboBoxChildItem
-        combo_box_ChildItem.setStyleSheet("font-size: 14px;")
-        
+        combo_box_ChildItem.setStyleSheet("font-size: 14px;")        
         self.ui.pushButtonLock.clicked.connect(self.submit_data)
         self.ui.pushButtonUnlock.clicked.connect(self.submit_data)
         self.ui.pushButtonClose.clicked.connect(self.close_tab)         
     def submit_data(self):
-        item_description = self.input_item_description.text()
-        alias = self.input_alias.text()
-        generic_name = self.input_generic_name.text()
-        category = self.input_category.text()
-        # Extract data from other input fields here
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")       
+        # Convert the Decimal to a string for JSON serialization
+        cValue = str(Decimal(self.ui.textEditConversionValue.toPlainText()))        
+        print(self.ui.comboBoxVAT.currentText())         
         data = {
             "data": {
-                "ItemDescription": item_description,
-                "Alias": alias,
-                "GenericName": generic_name,
-                "Category": category,
-                # Add more fields here based on your database schema
+                "ItemCode": self.ui.textEditItemCode.toPlainText(),
+                "Barcode": self.ui.textEditBarcode.toPlainText(),
+                "ItemDescription": self.ui.textEditItemDescription.toPlainText(),
+                "Alias": self.ui.textEditAlias.toPlainText(),
+                "GenericName": self.ui.textEditGenericName.toPlainText(),
+                "Remarks": self.ui.textEditRemarks.toPlainText(),
+                "LotNumber": self.ui.textEditLotNo.toPlainText(),
+                "Cost": float(self.ui.textEditCost.toPlainText()),
+                "MarkUp": float(self.ui.textEditMarkUp.toPlainText()),
+                "Price": float(self.ui.textEditPrice.toPlainText()),
+                "ReorderQuantity": float(self.ui.textEditStockLevelQty.toPlainText()),
+                "OnhandQuantity": float(self.ui.textEditOnHandQty.toPlainText()),
+                "cValue": cValue,
+                "SalesAccountId": int("74"),
+                "AssetAccountId": int("159"),
+                "ExpiryDate": self.ui.dateEditExpiryDate.date().toString(Qt.ISODate),
+                "ImagePath": self.ui.textEditImageFilePath.toPlainText(),      
+                "ChildItemId": self.ui.comboBoxChildItem.currentText(),
+                "Category": self.ui.comboBoxCategory.currentText(), 
+                "UnitId": self.ui.comboBoxUnit.currentText(), 
+                "DefaultSupplierId": self.ui.comboBoxSupplier.currentText(),
+                # "InTaxId": self.ui.comboBoxVAT.currentText(),     
+                "InTaxId": int("9"),
+                "InTaxId": int("9"),  
+                "IsPackage": self.ui.checkBoxIsPackaged.isChecked(),
+                "isMonitored": self.ui.checkBoxIsMonitored.isChecked(),
+                "IsStickerPrinted": self.ui.checkBoxIsStickerPrinted.isChecked(),
+                "EntryDateTime": formatted_datetime,
+                "UpdateDateTime": formatted_datetime,                
+                "IsInventory": self.ui.checkBoxIsInventory.isChecked()
             }
         }
+        # Serialize the data to JSON
+        json_data = json.dumps(data)
         api_url = "http://localhost:8000/items/"  # Replace with your API URL
         headers = {"Content-Type": "application/json"}
         try:
-            response = requests.post(api_url, data=json.dumps(data), headers=headers)
+            response = requests.post(api_url, data=json_data, headers=headers)
 
             if response.status_code == 200:
                 print("Data submitted successfully.")
@@ -278,7 +304,7 @@ class EmbeddedItemList(QWidget):
     def __init__(self, main_window, tab_widget, menu_instance):
         super().__init__()
         self.main_window = main_window
-        self.ui = Ui_FormList()
+        self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.tab_widget = tab_widget
         self.ui.pushButtonClose.clicked.connect(self.close_tab)
@@ -288,7 +314,7 @@ class EmbeddedItemList(QWidget):
         # Connect the textChanged signal of the search input to the search_data function
         # self.ui.textEditItemFilter.textChanged.connect(self.search_data)        
         # Call the load_table_headers method on the menu_instance
-        # menu_instance.load_table_headers(self.ui.tableWidget)      
+        menu_instance.load_table_headers(self.ui.tableWidget)      
         # menu_instance.update_data(self.ui.tableWidget)  # <-- This line calls the method from Menu class
         # Populate the comboBoxIsInventoryFilter with options
         self.ui.comboBoxIsInventoryFilter.addItems(["All", "Inventory", "Non-Inventory"])
